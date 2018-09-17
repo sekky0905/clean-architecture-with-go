@@ -25,6 +25,17 @@ func (e *InvalidPropertyError) Error() string {
 	return fmt.Sprintf("%s is invalid. %s", e.Property, e.Message)
 }
 
+// InvalidParameterError は、Parameterが不適切な場合のエラー。
+type InvalidParameterError struct {
+	Parameter string
+	Message   string
+}
+
+// Error は、エラー文を返す。
+func (e *InvalidParameterError) Error() string {
+	return fmt.Sprintf("%s is invalid. %s", e.Parameter, e.Message)
+}
+
 // DBError は、DBのエラーを表す。
 type DBError struct {
 	ModelName string
