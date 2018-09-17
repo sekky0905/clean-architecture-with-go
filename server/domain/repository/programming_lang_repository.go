@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"github.com/SekiguchiKai/clean-architecture-go/server/domain/model"
+	"github.com/SekiguchiKai/clean-architecture-with-go/server/domain/model"
 )
 
 // ProgrammingLangRepository は、ProgrammingLangのRepository。
