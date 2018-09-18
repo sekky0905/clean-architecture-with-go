@@ -7,9 +7,12 @@ import (
 	"github.com/pkg/errors"
 )
 
-const OtherErr = "some error has occurred"
-const IDShouldBeIntErr = "ID Should be int"
-const LimitShouldBeIntErr = "Limit Should be int"
+// エラーの定数。
+const (
+	OtherErr            = "some error has occurred"
+	IDShouldBeIntErr    = "ID Should be int"
+	LimitShouldBeIntErr = "Limit Should be int"
+)
 
 // handledError はハンドリング後のエラー。
 type handledError struct {
