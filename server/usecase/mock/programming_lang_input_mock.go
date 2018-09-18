@@ -5,6 +5,7 @@
 package mock_input
 
 import (
+	context "context"
 	model "github.com/SekiguchiKai/clean-architecture-with-go/server/domain/model"
 	gomock "github.com/golang/mock/gomock"
 	reflect "reflect"
@@ -34,65 +35,65 @@ func (m *MockProgrammingLangInputPort) EXPECT() *MockProgrammingLangInputPortMoc
 }
 
 // List mocks base method
-func (m *MockProgrammingLangInputPort) List(limit int) ([]*model.ProgrammingLang, error) {
-	ret := m.ctrl.Call(m, "List", limit)
+func (m *MockProgrammingLangInputPort) List(ctx context.Context, limit int) ([]*model.ProgrammingLang, error) {
+	ret := m.ctrl.Call(m, "List", ctx, limit)
 	ret0, _ := ret[0].([]*model.ProgrammingLang)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // List indicates an expected call of List
-func (mr *MockProgrammingLangInputPortMockRecorder) List(limit interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "List", reflect.TypeOf((*MockProgrammingLangInputPort)(nil).List), limit)
+func (mr *MockProgrammingLangInputPortMockRecorder) List(ctx, limit interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "List", reflect.TypeOf((*MockProgrammingLangInputPort)(nil).List), ctx, limit)
 }
 
 // Get mocks base method
-func (m *MockProgrammingLangInputPort) Get(id int) (*model.ProgrammingLang, error) {
-	ret := m.ctrl.Call(m, "Get", id)
+func (m *MockProgrammingLangInputPort) Get(ctx context.Context, id int) (*model.ProgrammingLang, error) {
+	ret := m.ctrl.Call(m, "Get", ctx, id)
 	ret0, _ := ret[0].(*model.ProgrammingLang)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Get indicates an expected call of Get
-func (mr *MockProgrammingLangInputPortMockRecorder) Get(id interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockProgrammingLangInputPort)(nil).Get), id)
+func (mr *MockProgrammingLangInputPortMockRecorder) Get(ctx, id interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockProgrammingLangInputPort)(nil).Get), ctx, id)
 }
 
 // Create mocks base method
-func (m *MockProgrammingLangInputPort) Create(param *model.ProgrammingLang) (*model.ProgrammingLang, error) {
-	ret := m.ctrl.Call(m, "Create", param)
+func (m *MockProgrammingLangInputPort) Create(ctx context.Context, param *model.ProgrammingLang) (*model.ProgrammingLang, error) {
+	ret := m.ctrl.Call(m, "Create", ctx, param)
 	ret0, _ := ret[0].(*model.ProgrammingLang)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Create indicates an expected call of Create
-func (mr *MockProgrammingLangInputPortMockRecorder) Create(param interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockProgrammingLangInputPort)(nil).Create), param)
+func (mr *MockProgrammingLangInputPortMockRecorder) Create(ctx, param interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockProgrammingLangInputPort)(nil).Create), ctx, param)
 }
 
 // Update mocks base method
-func (m *MockProgrammingLangInputPort) Update(param *model.ProgrammingLang) (*model.ProgrammingLang, error) {
-	ret := m.ctrl.Call(m, "Update", param)
+func (m *MockProgrammingLangInputPort) Update(ctx context.Context, param *model.ProgrammingLang) (*model.ProgrammingLang, error) {
+	ret := m.ctrl.Call(m, "Update", ctx, param)
 	ret0, _ := ret[0].(*model.ProgrammingLang)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Update indicates an expected call of Update
-func (mr *MockProgrammingLangInputPortMockRecorder) Update(param interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockProgrammingLangInputPort)(nil).Update), param)
+func (mr *MockProgrammingLangInputPortMockRecorder) Update(ctx, param interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockProgrammingLangInputPort)(nil).Update), ctx, param)
 }
 
 // Delete mocks base method
-func (m *MockProgrammingLangInputPort) Delete(id int) error {
-	ret := m.ctrl.Call(m, "Delete", id)
+func (m *MockProgrammingLangInputPort) Delete(ctx context.Context, id int) error {
+	ret := m.ctrl.Call(m, "Delete", ctx, id)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Delete indicates an expected call of Delete
-func (mr *MockProgrammingLangInputPortMockRecorder) Delete(id interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockProgrammingLangInputPort)(nil).Delete), id)
+func (mr *MockProgrammingLangInputPortMockRecorder) Delete(ctx, id interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockProgrammingLangInputPort)(nil).Delete), ctx, id)
 }

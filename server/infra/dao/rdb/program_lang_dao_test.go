@@ -27,7 +27,7 @@ func TestNewProgrammingLangDAO(t *testing.T) {
 		{
 			name: "適切な引数を与えると、ProgrammingLangDAOが返されること",
 			args: args{
-				ctx: context.TODO(),
+				ctx: context.Background(),
 				manager: &rdb.SQLManager{
 					Conn: &sql.DB{},
 				},
@@ -36,7 +36,7 @@ func TestNewProgrammingLangDAO(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := rdb.NewProgrammingLangDAO(tt.args.ctx, tt.args.manager); got == nil {
+			if got := rdb.NewProgrammingLangDAO(tt.args.manager); got == nil {
 				t.Errorf("NewProgrammingLangDAO() = nil")
 			}
 		})
@@ -53,10 +53,10 @@ func TestProgrammingLangDAO_Create(t *testing.T) {
 	defer db.Close()
 
 	type fields struct {
-		Ctx        context.Context
 		SQLManager rdb.SQLManagerInterface
 	}
 	type args struct {
+		ctx  context.Context
 		lang *model.ProgrammingLang
 	}
 	tests := []struct {
@@ -70,10 +70,10 @@ func TestProgrammingLangDAO_Create(t *testing.T) {
 		{
 			name: "NameとFeatureを保持するProgrammingLangを与えられた場合、IDを付与したProgrammingLangを返すこと",
 			fields: fields{
-				Ctx:        context.TODO(),
 				SQLManager: &rdb.SQLManager{Conn: db},
 			},
 			args: args{
+				ctx: context.Background(),
 				lang: &model.ProgrammingLang{
 					Name:      model.TestName,
 					Feature:   model.TestFeature,
@@ -94,10 +94,10 @@ func TestProgrammingLangDAO_Create(t *testing.T) {
 		{
 			name: "Nameのみを保持するProgrammingLangを与えられた場合、IDを付与したProgrammingLangを返すこと",
 			fields: fields{
-				Ctx:        context.TODO(),
 				SQLManager: &rdb.SQLManager{Conn: db},
 			},
 			args: args{
+				ctx: context.Background(),
 				lang: &model.ProgrammingLang{
 					Name:      model.TestName,
 					CreatedAt: model.GetTestTime(time.September, 1),
@@ -116,10 +116,10 @@ func TestProgrammingLangDAO_Create(t *testing.T) {
 		{
 			name: "RowAffectedが1以外の場合、エラーを返すこと",
 			fields: fields{
-				Ctx:        context.TODO(),
 				SQLManager: &rdb.SQLManager{Conn: db},
 			},
 			args: args{
+				ctx: context.Background(),
 				lang: &model.ProgrammingLang{
 					Name:      model.TestName,
 					CreatedAt: model.GetTestTime(time.September, 1),
@@ -133,10 +133,10 @@ func TestProgrammingLangDAO_Create(t *testing.T) {
 		{
 			name: "空のProgrammingLangを与えられた場合、エラーを返すこと",
 			fields: fields{
-				Ctx:        context.TODO(),
 				SQLManager: &rdb.SQLManager{Conn: db},
 			},
 			args: args{
+				ctx:  context.Background(),
 				lang: &model.ProgrammingLang{},
 			},
 			want:        nil,
@@ -146,10 +146,10 @@ func TestProgrammingLangDAO_Create(t *testing.T) {
 		{
 			name: "Featureを保持する空のProgrammingLangを与えられた場合、エラーを返すこと",
 			fields: fields{
-				Ctx:        context.TODO(),
 				SQLManager: &rdb.SQLManager{Conn: db},
 			},
 			args: args{
+				ctx:  context.Background(),
 				lang: &model.ProgrammingLang{},
 			},
 			want:        nil,
@@ -168,9 +168,9 @@ func TestProgrammingLangDAO_Create(t *testing.T) {
 				prep.ExpectExec().WithArgs(tt.args.lang.Name, tt.args.lang.Feature, tt.args.lang.CreatedAt, tt.args.lang.UpdatedAt).WillReturnResult(sqlmock.NewResult(1, tt.rowAffected))
 			}
 
-			dao := rdb.NewProgrammingLangDAO(tt.fields.Ctx, tt.fields.SQLManager)
+			dao := rdb.NewProgrammingLangDAO(tt.fields.SQLManager)
 
-			got, err := dao.Create(tt.args.lang)
+			got, err := dao.Create(tt.args.ctx, tt.args.lang)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("ProgrammingLangDAO.Create() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -200,20 +200,28 @@ func TestProgrammingLangDAO_List(t *testing.T) {
 	defer db.Close()
 
 	type fields struct {
-		Ctx        context.Context
 		SQLManager rdb.SQLManagerInterface
 	}
+	type args struct {
+		ctx   context.Context
+		limit int
+	}
+
 	tests := []struct {
 		name    string
 		fields  fields
+		args    args
 		want    []*model.ProgrammingLang
 		wantErr bool
 	}{
 		{
 			name: "NameとFeatureを保持するProgrammingLangを与えられた場合、IDを付与したProgrammingLangを返すこと",
 			fields: fields{
-				Ctx:        context.TODO(),
 				SQLManager: &rdb.SQLManager{Conn: db},
+			},
+			args: args{
+				ctx:   context.Background(),
+				limit: 100,
 			},
 			want: []*model.ProgrammingLang{
 				{
@@ -243,8 +251,11 @@ func TestProgrammingLangDAO_List(t *testing.T) {
 		{
 			name: "NameとFeatureを保持するProgrammingLangを与えられた場合、IDを付与したProgrammingLangを返すこと",
 			fields: fields{
-				Ctx:        context.TODO(),
 				SQLManager: &rdb.SQLManager{Conn: db},
+			},
+			args: args{
+				ctx:   context.Background(),
+				limit: 100,
 			},
 			want:    nil,
 			wantErr: true,
@@ -265,9 +276,9 @@ func TestProgrammingLangDAO_List(t *testing.T) {
 				prep.ExpectQuery().WillReturnRows(rows)
 			}
 
-			dao := rdb.NewProgrammingLangDAO(tt.fields.Ctx, tt.fields.SQLManager)
+			dao := rdb.NewProgrammingLangDAO(tt.fields.SQLManager)
 
-			got, err := dao.List(100)
+			got, err := dao.List(tt.args.ctx, tt.args.limit)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("ProgrammingLangDAO.List() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -292,11 +303,11 @@ func TestProgrammingLangDAO_Read(t *testing.T) {
 	defer db.Close()
 
 	type fields struct {
-		Ctx        context.Context
 		SQLManager rdb.SQLManagerInterface
 	}
 	type args struct {
-		id int
+		ctx context.Context
+		id  int
 	}
 	tests := []struct {
 		name    string
@@ -308,11 +319,11 @@ func TestProgrammingLangDAO_Read(t *testing.T) {
 		{
 			name: "IDで指定したProgrammingLangが存在する場合、ProgrammingLangを1件返すこと",
 			fields: fields{
-				Ctx:        context.TODO(),
 				SQLManager: &rdb.SQLManager{Conn: db},
 			},
 			args: args{
-				id: 1,
+				ctx: context.Background(),
+				id:  1,
 			},
 			want: &model.ProgrammingLang{
 				ID:        1,
@@ -326,11 +337,11 @@ func TestProgrammingLangDAO_Read(t *testing.T) {
 		{
 			name: "IDで指定したProgrammingLangが存在しない場合、エラー返すこと",
 			fields: fields{
-				Ctx:        context.TODO(),
 				SQLManager: &rdb.SQLManager{Conn: db},
 			},
 			args: args{
-				id: 2,
+				ctx: context.Background(),
+				id:  2,
 			},
 			want:    nil,
 			wantErr: true,
@@ -349,9 +360,9 @@ func TestProgrammingLangDAO_Read(t *testing.T) {
 				prep.ExpectQuery().WillReturnRows(rows)
 			}
 
-			dao := rdb.NewProgrammingLangDAO(tt.fields.Ctx, tt.fields.SQLManager)
+			dao := rdb.NewProgrammingLangDAO(tt.fields.SQLManager)
 
-			got, err := dao.Read(tt.args.id)
+			got, err := dao.Read(tt.args.ctx, tt.args.id)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("ProgrammingLangDAO.Read() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -373,10 +384,10 @@ func TestProgrammingLangDAO_ReadByName(t *testing.T) {
 	defer db.Close()
 
 	type fields struct {
-		Ctx        context.Context
 		SQLManager rdb.SQLManagerInterface
 	}
 	type args struct {
+		ctx  context.Context
 		name string
 	}
 	tests := []struct {
@@ -389,10 +400,10 @@ func TestProgrammingLangDAO_ReadByName(t *testing.T) {
 		{
 			name: "IDで指定したProgrammingLangが1件存在する場合、ProgrammingLangを1件返すこと",
 			fields: fields{
-				Ctx:        context.TODO(),
 				SQLManager: &rdb.SQLManager{Conn: db},
 			},
 			args: args{
+				ctx:  context.Background(),
 				name: model.TestName,
 			},
 			want: &model.ProgrammingLang{
@@ -407,10 +418,10 @@ func TestProgrammingLangDAO_ReadByName(t *testing.T) {
 		{
 			name: "IDで指定したProgrammingLangが存在しない場合、エラー返すこと",
 			fields: fields{
-				Ctx:        context.TODO(),
 				SQLManager: &rdb.SQLManager{Conn: db},
 			},
 			args: args{
+				ctx:  context.Background(),
 				name: "test",
 			},
 			want:    nil,
@@ -430,9 +441,9 @@ func TestProgrammingLangDAO_ReadByName(t *testing.T) {
 				prep.ExpectQuery().WillReturnRows(rows)
 			}
 
-			dao := rdb.NewProgrammingLangDAO(tt.fields.Ctx, tt.fields.SQLManager)
+			dao := rdb.NewProgrammingLangDAO(tt.fields.SQLManager)
 
-			got, err := dao.ReadByName(tt.args.name)
+			got, err := dao.ReadByName(tt.args.ctx, tt.args.name)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("ProgrammingLangDAO.ReadByName() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -456,10 +467,10 @@ func TestProgrammingLangDAO_Update(t *testing.T) {
 	defer db.Close()
 
 	type fields struct {
-		Ctx        context.Context
 		SQLManager rdb.SQLManagerInterface
 	}
 	type args struct {
+		ctx  context.Context
 		lang *model.ProgrammingLang
 	}
 	tests := []struct {
@@ -473,10 +484,10 @@ func TestProgrammingLangDAO_Update(t *testing.T) {
 		{
 			name: "NameとFeatureを保持するProgrammingLangを与えられた場合、IDを付与したProgrammingLangを返すこと",
 			fields: fields{
-				Ctx:        context.TODO(),
 				SQLManager: &rdb.SQLManager{Conn: db},
 			},
 			args: args{
+				ctx: context.Background(),
 				lang: &model.ProgrammingLang{
 					Name:      model.TestName,
 					Feature:   model.TestFeature,
@@ -497,10 +508,10 @@ func TestProgrammingLangDAO_Update(t *testing.T) {
 		{
 			name: "Nameのみを保持するProgrammingLangを与えられた場合、IDを付与したProgrammingLangを返すこと",
 			fields: fields{
-				Ctx:        context.TODO(),
 				SQLManager: &rdb.SQLManager{Conn: db},
 			},
 			args: args{
+				ctx: context.Background(),
 				lang: &model.ProgrammingLang{
 					Name:      model.TestName,
 					CreatedAt: model.GetTestTime(time.September, 1),
@@ -519,10 +530,10 @@ func TestProgrammingLangDAO_Update(t *testing.T) {
 		{
 			name: "RowAffectedが1以外の場合、エラーを返すこと",
 			fields: fields{
-				Ctx:        context.TODO(),
 				SQLManager: &rdb.SQLManager{Conn: db},
 			},
 			args: args{
+				ctx: context.Background(),
 				lang: &model.ProgrammingLang{
 					Name:      model.TestName,
 					CreatedAt: model.GetTestTime(time.September, 1),
@@ -536,10 +547,10 @@ func TestProgrammingLangDAO_Update(t *testing.T) {
 		{
 			name: "空のProgrammingLangを与えられた場合、エラーを返すこと",
 			fields: fields{
-				Ctx:        context.TODO(),
 				SQLManager: &rdb.SQLManager{Conn: db},
 			},
 			args: args{
+				ctx:  context.Background(),
 				lang: &model.ProgrammingLang{},
 			},
 			want:        nil,
@@ -549,10 +560,10 @@ func TestProgrammingLangDAO_Update(t *testing.T) {
 		{
 			name: "Featureのみを保持するProgrammingLangを与えられた場合、エラーを返すこと",
 			fields: fields{
-				Ctx:        context.TODO(),
 				SQLManager: &rdb.SQLManager{Conn: db},
 			},
 			args: args{
+				ctx:  context.Background(),
 				lang: &model.ProgrammingLang{},
 			},
 			want:        nil,
@@ -571,9 +582,9 @@ func TestProgrammingLangDAO_Update(t *testing.T) {
 				prep.ExpectExec().WithArgs(tt.args.lang.Name, tt.args.lang.Feature, tt.args.lang.CreatedAt, tt.args.lang.UpdatedAt, tt.args.lang.ID).WillReturnResult(sqlmock.NewResult(1, tt.rowAffected))
 			}
 
-			dao := rdb.NewProgrammingLangDAO(tt.fields.Ctx, tt.fields.SQLManager)
+			dao := rdb.NewProgrammingLangDAO(tt.fields.SQLManager)
 
-			got, err := dao.Update(tt.args.lang)
+			got, err := dao.Update(tt.args.ctx, tt.args.lang)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("ProgrammingLangDAO.Update() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -595,11 +606,11 @@ func TestProgrammingLangDAO_Delete(t *testing.T) {
 	defer db.Close()
 
 	type fields struct {
-		Ctx        context.Context
 		SQLManager rdb.SQLManagerInterface
 	}
 	type args struct {
-		id int
+		ctx context.Context
+		id  int
 	}
 	tests := []struct {
 		name        string
@@ -611,11 +622,11 @@ func TestProgrammingLangDAO_Delete(t *testing.T) {
 		{
 			name: "Nameのみを保持するProgrammingLangを与えられた場合、IDを付与したProgrammingLangを返すこと",
 			fields: fields{
-				Ctx:        context.TODO(),
 				SQLManager: &rdb.SQLManager{Conn: db},
 			},
 			args: args{
-				id: 1,
+				ctx: context.Background(),
+				id:  1,
 			},
 			rowAffected: 1,
 			wantErr:     false,
@@ -623,11 +634,11 @@ func TestProgrammingLangDAO_Delete(t *testing.T) {
 		{
 			name: "Nameのみを保持するProgrammingLangを与えられた場合、IDを付与したProgrammingLangを返すこと",
 			fields: fields{
-				Ctx:        context.TODO(),
 				SQLManager: &rdb.SQLManager{Conn: db},
 			},
 			args: args{
-				id: 1,
+				ctx: context.Background(),
+				id:  1,
 			},
 			rowAffected: 2,
 			wantErr:     true,
@@ -635,11 +646,11 @@ func TestProgrammingLangDAO_Delete(t *testing.T) {
 		{
 			name: "IDが空の場合、ProgrammingLangを与えられた場合、IDを付与したProgrammingLangを返すこと",
 			fields: fields{
-				Ctx:        context.TODO(),
 				SQLManager: &rdb.SQLManager{Conn: db},
 			},
 			args: args{
-				id: 1,
+				ctx: context.Background(),
+				id:  1,
 			},
 			rowAffected: 1,
 			wantErr:     true,
@@ -656,9 +667,9 @@ func TestProgrammingLangDAO_Delete(t *testing.T) {
 				prep.ExpectExec().WithArgs(tt.args.id).WillReturnResult(sqlmock.NewResult(1, tt.rowAffected))
 			}
 
-			dao := rdb.NewProgrammingLangDAO(tt.fields.Ctx, tt.fields.SQLManager)
+			dao := rdb.NewProgrammingLangDAO(tt.fields.SQLManager)
 
-			if err := dao.Delete(tt.args.id); (err != nil) != tt.wantErr {
+			if err := dao.Delete(tt.args.ctx, tt.args.id); (err != nil) != tt.wantErr {
 				t.Errorf("ProgrammingLangDAO.Delete() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}

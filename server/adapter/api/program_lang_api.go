@@ -39,7 +39,8 @@ func (api *ProgrammingLangAPI) List(c *gin.Context) {
 		return
 	}
 
-	langSlice, err := api.UseCase.List(limit)
+	ctx := c.Request.Context()
+	langSlice, err := api.UseCase.List(ctx, limit)
 	if err != nil {
 		he := handleError(err)
 		c.JSON(he.code, he.message)
@@ -58,7 +59,8 @@ func (api *ProgrammingLangAPI) Get(c *gin.Context) {
 		return
 	}
 
-	lang, err := api.UseCase.Get(id)
+	ctx := c.Request.Context()
+	lang, err := api.UseCase.Get(ctx, id)
 	if err != nil {
 		he := handleError(err)
 		c.JSON(he.code, he.message)
@@ -76,7 +78,8 @@ func (api *ProgrammingLangAPI) Create(c *gin.Context) {
 		return
 	}
 
-	lang, err := api.UseCase.Create(params)
+	ctx := c.Request.Context()
+	lang, err := api.UseCase.Create(ctx, params)
 	if err != nil {
 		he := handleError(err)
 		c.JSON(he.code, he.message)
@@ -94,7 +97,8 @@ func (api *ProgrammingLangAPI) Update(c *gin.Context) {
 		return
 	}
 
-	lang, err := api.UseCase.Update(params)
+	ctx := c.Request.Context()
+	lang, err := api.UseCase.Update(ctx, params)
 	if err != nil {
 		he := handleError(err)
 		c.JSON(he.code, he.message)
@@ -113,7 +117,8 @@ func (api *ProgrammingLangAPI) Delete(c *gin.Context) {
 		return
 	}
 
-	if err := api.UseCase.Delete(id); err != nil {
+	ctx := c.Request.Context()
+	if err := api.UseCase.Delete(ctx, id); err != nil {
 		he := handleError(err)
 		c.JSON(he.code, he.message)
 		return
