@@ -9,6 +9,8 @@ import (
 	"reflect"
 	"testing"
 
+	"context"
+
 	"github.com/SekiguchiKai/clean-architecture-with-go/server/adapter/api"
 	"github.com/SekiguchiKai/clean-architecture-with-go/server/domain/model"
 	"github.com/SekiguchiKai/clean-architecture-with-go/server/usecase/input"
@@ -70,6 +72,7 @@ func TestProgrammingLangAPI_List(t *testing.T) {
 	}
 
 	type mock struct {
+		ctx      context.Context
 		errLimit string
 		limit    int
 		result   []*model.ProgrammingLang
@@ -90,6 +93,7 @@ func TestProgrammingLangAPI_List(t *testing.T) {
 		{
 			name: "リクエストのクエリパラメータが20で、データが20件以上存在する場合、ステータスコード200と20件のデータを返すこと",
 			mock: mock{
+				ctx:    context.Background(),
 				limit:  20,
 				result: model.CreateProgrammingLangs(20),
 				err:    nil,
@@ -102,6 +106,7 @@ func TestProgrammingLangAPI_List(t *testing.T) {
 		{
 			name: "リクエストのクエリパラメータが文字列の場合、ステータスコード400とエラーメッセージを返すこと",
 			mock: mock{
+				ctx:      context.Background(),
 				errLimit: "test",
 				result:   nil,
 				err:      paramErr,
@@ -115,6 +120,7 @@ func TestProgrammingLangAPI_List(t *testing.T) {
 		{
 			name: "サーバー側のエラーが発生した場合、ステータスコード500とエラーメッセージを返すこと",
 			mock: mock{
+				ctx:    context.Background(),
 				limit:  20,
 				result: nil,
 				err:    dbErr,
@@ -134,7 +140,7 @@ func TestProgrammingLangAPI_List(t *testing.T) {
 			url := fmt.Sprintf("%s?%s=%s", api.ProgrammingLangAPIPath, api.Limit, tt.mock.errLimit)
 			if util.IsEmpty(tt.mock.errLimit) {
 				url = fmt.Sprintf("%s?%s=%d", api.ProgrammingLangAPIPath, api.Limit, tt.mock.limit)
-				u.EXPECT().List(tt.mock.limit).Return(tt.mock.result, tt.mock.err)
+				u.EXPECT().List(tt.mock.ctx, tt.mock.limit).Return(tt.mock.result, tt.mock.err)
 			}
 
 			rec := httptest.NewRecorder()
@@ -193,6 +199,7 @@ func TestProgrammingLangAPI_Get(t *testing.T) {
 	}
 
 	type mock struct {
+		ctx    context.Context
 		id     int
 		result *model.ProgrammingLang
 		err    error
@@ -212,6 +219,7 @@ func TestProgrammingLangAPI_Get(t *testing.T) {
 		{
 			name: "リクエストのURLのIDのパラメータが適切な場合、ステータスコード200と1件のデータを返すこと",
 			mock: mock{
+				ctx:    context.Background(),
 				id:     1,
 				result: model.CreateProgrammingLangs(1)[0],
 				err:    nil,
@@ -224,6 +232,7 @@ func TestProgrammingLangAPI_Get(t *testing.T) {
 		{
 			name: "リクエストのURLのIDのパラメータと同一のIDを持つデータが存在しない場合、ステータスコード404とエラーメッセージを返すこと",
 			mock: mock{
+				ctx:    context.Background(),
 				id:     100,
 				result: nil,
 				err:    noDataErr,
@@ -237,6 +246,7 @@ func TestProgrammingLangAPI_Get(t *testing.T) {
 		{
 			name: "サーバー側のエラーが発生した場合、ステータスコード500とエラーメッセージを返すこと",
 			mock: mock{
+				ctx:    context.Background(),
 				id:     20,
 				result: nil,
 				err:    dbErr,
@@ -252,7 +262,7 @@ func TestProgrammingLangAPI_Get(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			r := gin.New()
 			r.GET(fmt.Sprintf("%s/:%s", api.ProgrammingLangAPIPath, api.ID), handler)
-			u.EXPECT().Get(tt.mock.id).Return(tt.mock.result, tt.mock.err)
+			u.EXPECT().Get(tt.mock.ctx, tt.mock.id).Return(tt.mock.result, tt.mock.err)
 
 			rec := httptest.NewRecorder()
 			url := fmt.Sprintf("%s/%d", api.ProgrammingLangAPIPath, tt.mock.id)
@@ -308,6 +318,7 @@ func TestProgrammingLangAPI_Create(t *testing.T) {
 	}
 
 	type mock struct {
+		ctx    context.Context
 		param  *model.ProgrammingLang
 		result *model.ProgrammingLang
 		err    error
@@ -327,6 +338,7 @@ func TestProgrammingLangAPI_Create(t *testing.T) {
 		{
 			name: "リクエストボディのProgrammingLangが適切な場合、ステータスコード200と1件のデータを返すこと",
 			mock: mock{
+				ctx:    context.Background(),
 				param:  model.CreateProgrammingLangs(1)[0],
 				result: model.CreateProgrammingLangs(1)[0],
 				err:    nil,
@@ -339,6 +351,7 @@ func TestProgrammingLangAPI_Create(t *testing.T) {
 		{
 			name: "リクエストボディのProgrammingLangが既に存在している場合、ステータスコード409とエラーメッセージを返すこと",
 			mock: mock{
+				ctx:    context.Background(),
 				param:  model.CreateProgrammingLangs(1)[0],
 				result: nil,
 				err:    conflictErr,
@@ -352,6 +365,7 @@ func TestProgrammingLangAPI_Create(t *testing.T) {
 		{
 			name: "サーバー側のエラーが発生した場合、ステータスコード500とエラーメッセージを返すこと",
 			mock: mock{
+				ctx:    context.Background(),
 				param:  model.CreateProgrammingLangs(1)[0],
 				result: nil,
 				err:    dbErr,
@@ -368,7 +382,7 @@ func TestProgrammingLangAPI_Create(t *testing.T) {
 			r := gin.New()
 			r.POST(api.ProgrammingLangAPIPath, handler)
 
-			u.EXPECT().Create(tt.mock.param).Return(tt.mock.result, tt.mock.err)
+			u.EXPECT().Create(tt.mock.ctx, tt.mock.param).Return(tt.mock.result, tt.mock.err)
 
 			rec := httptest.NewRecorder()
 			b, err := json.Marshal(tt.mock.param)
@@ -429,6 +443,7 @@ func TestProgrammingLangAPI_Update(t *testing.T) {
 	}
 
 	type mock struct {
+		ctx    context.Context
 		id     int
 		param  *model.ProgrammingLang
 		result *model.ProgrammingLang
@@ -459,6 +474,7 @@ func TestProgrammingLangAPI_Update(t *testing.T) {
 		{
 			name: "リクエストボディのProgrammingLangが適切な場合、ステータスコード200と1件のデータを返すこと",
 			mock: mock{
+				ctx:    context.Background(),
 				param:  model.CreateProgrammingLangs(1)[0],
 				result: model.CreateProgrammingLangs(1)[0],
 				err:    nil,
@@ -474,6 +490,7 @@ func TestProgrammingLangAPI_Update(t *testing.T) {
 		{
 			name: "リクエストのURLのIDのパラメータと同一のIDを持つデータが存在しない場合、ステータスコード404とエラーメッセージを返すこと",
 			mock: mock{
+				ctx:    context.Background(),
 				param:  model.CreateProgrammingLangs(1)[0],
 				result: nil,
 				err:    noDataErr,
@@ -490,6 +507,7 @@ func TestProgrammingLangAPI_Update(t *testing.T) {
 		{
 			name: "サーバー側のエラーが発生した場合、ステータスコード500とエラーメッセージを返すこと",
 			mock: mock{
+				ctx:    context.Background(),
 				param:  model.CreateProgrammingLangs(1)[0],
 				result: nil,
 				err:    dbErr,
@@ -509,7 +527,7 @@ func TestProgrammingLangAPI_Update(t *testing.T) {
 			r := gin.New()
 			r.PUT(fmt.Sprintf("%s/:%s", api.ProgrammingLangAPIPath, api.ID), handler)
 
-			u.EXPECT().Update(tt.mock.param).Return(tt.mock.result, tt.mock.err)
+			u.EXPECT().Update(tt.mock.ctx, tt.mock.param).Return(tt.mock.result, tt.mock.err)
 
 			rec := httptest.NewRecorder()
 			b, err := json.Marshal(tt.mock.param)
@@ -571,6 +589,7 @@ func TestProgrammingLangAPI_Delete(t *testing.T) {
 	}
 
 	type mock struct {
+		ctx context.Context
 		id  int
 		err error
 	}
@@ -594,6 +613,7 @@ func TestProgrammingLangAPI_Delete(t *testing.T) {
 		{
 			name: "リクエストボディのProgrammingLangが適切な場合、ステータスコード200を返すこと",
 			mock: mock{
+				ctx: context.Background(),
 				id:  1,
 				err: nil,
 			},
@@ -608,6 +628,7 @@ func TestProgrammingLangAPI_Delete(t *testing.T) {
 		{
 			name: "リクエストのURLのIDのパラメータと同一のIDを持つデータが存在しない場合、ステータスコード404とエラーメッセージを返すこと",
 			mock: mock{
+				ctx: context.Background(),
 				id:  100,
 				err: noDataErr,
 			},
@@ -623,6 +644,7 @@ func TestProgrammingLangAPI_Delete(t *testing.T) {
 		{
 			name: "サーバー側のエラーが発生した場合、ステータスコード500とエラーメッセージを返すこと",
 			mock: mock{
+				ctx: context.Background(),
 				id:  1,
 				err: dbErr,
 			},
@@ -641,7 +663,7 @@ func TestProgrammingLangAPI_Delete(t *testing.T) {
 			r := gin.New()
 			r.DELETE(fmt.Sprintf("%s/:%s", api.ProgrammingLangAPIPath, api.ID), handler)
 
-			u.EXPECT().Delete(tt.mock.id).Return(tt.mock.err)
+			u.EXPECT().Delete(tt.mock.ctx, tt.mock.id).Return(tt.mock.err)
 
 			url := fmt.Sprintf("%s/%d", api.ProgrammingLangAPIPath, tt.param.id)
 

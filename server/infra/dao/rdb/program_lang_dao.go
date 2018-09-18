@@ -11,14 +11,12 @@ import (
 
 // ProgrammingLangDAO は、ProgrammingLangのDAO。
 type ProgrammingLangDAO struct {
-	Ctx        context.Context
 	SQLManager SQLManagerInterface
 }
 
 // NewProgrammingLangDAO は、ProgrammingLangDAO生成して返す。
-func NewProgrammingLangDAO(ctx context.Context, manager SQLManagerInterface) repository.ProgrammingLangRepository {
+func NewProgrammingLangDAO(manager SQLManagerInterface) repository.ProgrammingLangRepository {
 	return &ProgrammingLangDAO{
-		Ctx:        ctx,
 		SQLManager: manager,
 	}
 }
@@ -33,16 +31,16 @@ func (dao *ProgrammingLangDAO) ErrorMsg(method string, err error) error {
 }
 
 // Create は、レコードを1件生成する。
-func (dao *ProgrammingLangDAO) Create(lang *model.ProgrammingLang) (*model.ProgrammingLang, error) {
+func (dao *ProgrammingLangDAO) Create(ctx context.Context, lang *model.ProgrammingLang) (*model.ProgrammingLang, error) {
 	query := "INSERT INTO programming_languages (name, feature, created_at, updated_at) VALUES (?, ?, ?, ?)"
 
-	stmt, err := dao.SQLManager.PrepareContext(dao.Ctx, query)
+	stmt, err := dao.SQLManager.PrepareContext(ctx, query)
 	if err != nil {
 		return nil, dao.ErrorMsg(model.DBMethodCreate, err)
 	}
 	defer stmt.Close()
 
-	result, err := stmt.ExecContext(dao.Ctx, lang.Name, lang.Feature, lang.CreatedAt, lang.UpdatedAt)
+	result, err := stmt.ExecContext(ctx, lang.Name, lang.Feature, lang.CreatedAt, lang.UpdatedAt)
 	if err != nil {
 		return nil, dao.ErrorMsg(model.DBMethodCreate, err)
 	}
@@ -64,22 +62,22 @@ func (dao *ProgrammingLangDAO) Create(lang *model.ProgrammingLang) (*model.Progr
 }
 
 // List は、レコードの一覧を取得して返す。
-func (dao *ProgrammingLangDAO) List(limit int) ([]*model.ProgrammingLang, error) {
+func (dao *ProgrammingLangDAO) List(ctx context.Context, limit int) ([]*model.ProgrammingLang, error) {
 	query := "SELECT id, name, feature, created_at, updated_at FROM programming_languages ORDER BY name LIMIT=?"
-	return dao.list(query, limit)
+	return dao.list(ctx, query, limit)
 }
 
 // list は、レコードの一覧を取得して返す。
-func (dao *ProgrammingLangDAO) list(query string, limit int) ([]*model.ProgrammingLang, error) {
+func (dao *ProgrammingLangDAO) list(ctx context.Context, query string, limit int) ([]*model.ProgrammingLang, error) {
 
-	stmt, err := dao.SQLManager.PrepareContext(dao.Ctx, query)
+	stmt, err := dao.SQLManager.PrepareContext(ctx, query)
 	defer stmt.Close()
 
 	if err != nil {
 		return nil, dao.ErrorMsg(model.DBMethodList, err)
 	}
 
-	rows, err := stmt.QueryContext(dao.Ctx, limit)
+	rows, err := stmt.QueryContext(ctx, limit)
 	if err != nil {
 		return nil, dao.ErrorMsg(model.DBMethodList, err)
 	}
@@ -107,17 +105,17 @@ func (dao *ProgrammingLangDAO) list(query string, limit int) ([]*model.Programmi
 }
 
 // Read は、レコードを1件取得して返す。
-func (dao *ProgrammingLangDAO) Read(id int) (*model.ProgrammingLang, error) {
+func (dao *ProgrammingLangDAO) Read(ctx context.Context, id int) (*model.ProgrammingLang, error) {
 	query := "SELECT id, name, feature, created_at, updated_at FROM programming_languages WHERE ID=?"
 
-	stmt, err := dao.SQLManager.PrepareContext(dao.Ctx, query)
+	stmt, err := dao.SQLManager.PrepareContext(ctx, query)
 	defer stmt.Close()
 
 	if err != nil {
 		return nil, dao.ErrorMsg(model.DBMethodRead, err)
 	}
 
-	row := stmt.QueryRowContext(dao.Ctx, id)
+	row := stmt.QueryRowContext(ctx, id)
 	lang := &model.ProgrammingLang{}
 
 	err = row.Scan(
@@ -136,9 +134,9 @@ func (dao *ProgrammingLangDAO) Read(id int) (*model.ProgrammingLang, error) {
 }
 
 // ReadByName は、指定したNameを保持するレコードを1返す。
-func (dao *ProgrammingLangDAO) ReadByName(name string) (*model.ProgrammingLang, error) {
+func (dao *ProgrammingLangDAO) ReadByName(ctx context.Context, name string) (*model.ProgrammingLang, error) {
 	query := "SELECT id, name, feature, created_at, updated_at FROM programming_languages WHERE name=? ORDER BY name LIMIT=?"
-	langSlice, err := dao.list(query, 1)
+	langSlice, err := dao.list(ctx, query, 1)
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
@@ -146,16 +144,16 @@ func (dao *ProgrammingLangDAO) ReadByName(name string) (*model.ProgrammingLang, 
 }
 
 // Update は、レコードを1件更新する。
-func (dao *ProgrammingLangDAO) Update(lang *model.ProgrammingLang) (*model.ProgrammingLang, error) {
+func (dao *ProgrammingLangDAO) Update(ctx context.Context, lang *model.ProgrammingLang) (*model.ProgrammingLang, error) {
 	query := "UPDATE programming_languages SET name=?, feature=?, created_at=?, updated_at=? WHERE id=?"
 
-	stmt, err := dao.SQLManager.PrepareContext(dao.Ctx, query)
+	stmt, err := dao.SQLManager.PrepareContext(ctx, query)
 	if err != nil {
 		return nil, dao.ErrorMsg(model.DBMethodUpdate, err)
 	}
 	defer stmt.Close()
 
-	result, err := stmt.ExecContext(dao.Ctx, lang.Name, lang.Feature, lang.CreatedAt, lang.UpdatedAt, lang.ID)
+	result, err := stmt.ExecContext(ctx, lang.Name, lang.Feature, lang.CreatedAt, lang.UpdatedAt, lang.ID)
 	if err != nil {
 		return nil, dao.ErrorMsg(model.DBMethodUpdate, err)
 	}
@@ -177,17 +175,17 @@ func (dao *ProgrammingLangDAO) Update(lang *model.ProgrammingLang) (*model.Progr
 }
 
 // Delete は、レコードを1件削除する。
-func (dao *ProgrammingLangDAO) Delete(id int) error {
+func (dao *ProgrammingLangDAO) Delete(ctx context.Context, id int) error {
 	query := "DELETE FROM programming_languages WHERE id=?"
 
-	stmt, err := dao.SQLManager.PrepareContext(dao.Ctx, query)
+	stmt, err := dao.SQLManager.PrepareContext(ctx, query)
 	defer stmt.Close()
 
 	if err != nil {
 		return dao.ErrorMsg(model.DBMethodDelete, err)
 	}
 
-	result, err := stmt.ExecContext(dao.Ctx, id)
+	result, err := stmt.ExecContext(ctx, id)
 	if err != nil {
 		return dao.ErrorMsg(model.DBMethodDelete, err)
 	}

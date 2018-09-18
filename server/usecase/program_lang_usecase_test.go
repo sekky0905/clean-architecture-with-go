@@ -18,7 +18,6 @@ func TestNewProgrammingLangUseCase(t *testing.T) {
 	mock := mock_repository.NewMockProgrammingLangRepository(ctrl)
 
 	type args struct {
-		ctx  context.Context
 		repo repository.ProgrammingLangRepository
 	}
 	tests := []struct {
@@ -28,14 +27,13 @@ func TestNewProgrammingLangUseCase(t *testing.T) {
 		{
 			name: "適切な引数を与えると、ProgrammingLangUseCaseが返されること",
 			args: args{
-				ctx:  context.TODO(),
 				repo: mock,
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := NewProgrammingLangUseCase(tt.args.ctx, tt.args.repo); got == nil {
+			if got := NewProgrammingLangUseCase(tt.args.repo); got == nil {
 				t.Errorf("NewProgrammingLangUseCase() = %v, want not nil", got)
 			}
 		})
@@ -49,10 +47,10 @@ func TestProgrammingLangUseCase_List(t *testing.T) {
 	mock := mock_repository.NewMockProgrammingLangRepository(ctrl)
 
 	type fields struct {
-		Ctx  context.Context
 		Repo repository.ProgrammingLangRepository
 	}
 	type args struct {
+		ctx   context.Context
 		limit int
 	}
 	tests := []struct {
@@ -65,50 +63,60 @@ func TestProgrammingLangUseCase_List(t *testing.T) {
 		{
 			name: "limitを6件にした時に、6件のProgrammingLangを含んだProgrammingLangを返すこと",
 			fields: fields{
-				Ctx:  context.TODO(),
 				Repo: mock,
 			},
-			args:    args{limit: 6},
+			args: args{
+				ctx:   context.Background(),
+				limit: 6,
+			},
 			want:    model.CreateProgrammingLangs(6),
 			wantErr: false,
 		},
 		{
 			name: "limitを99件にした時に、99件のProgrammingLangを含んだProgrammingLangを返すこと",
 			fields: fields{
-				Ctx:  context.TODO(),
 				Repo: mock,
 			},
-			args:    args{limit: 99},
+			args: args{
+				ctx:   context.Background(),
+				limit: 99,
+			},
 			want:    model.CreateProgrammingLangs(99),
 			wantErr: false,
 		},
 		{
 			name: "limitを20件にした時に、20件のProgrammingLangを含んだProgrammingLangを返すこと",
 			fields: fields{
-				Ctx:  context.TODO(),
 				Repo: mock,
 			},
-			args:    args{limit: 20},
+			args: args{
+				ctx:   context.Background(),
+				limit: 20,
+			},
 			want:    model.CreateProgrammingLangs(20),
 			wantErr: false,
 		},
 		{
 			name: "limitを101件にした時に、21件のProgrammingLangを含んだProgrammingLangを返すこと",
 			fields: fields{
-				Ctx:  context.TODO(),
 				Repo: mock,
 			},
-			args:    args{limit: 21},
+			args: args{
+				ctx:   context.Background(),
+				limit: 21,
+			},
 			want:    model.CreateProgrammingLangs(21),
 			wantErr: false,
 		},
 		{
 			name: "limitを4件にした時に、20件のProgrammingLangを含んだProgrammingLangを返すこと",
 			fields: fields{
-				Ctx:  context.TODO(),
 				Repo: mock,
 			},
-			args:    args{limit: 21},
+			args: args{
+				ctx:   context.Background(),
+				limit: 21,
+			},
 			want:    model.CreateProgrammingLangs(21),
 			wantErr: false,
 		},
@@ -116,13 +124,12 @@ func TestProgrammingLangUseCase_List(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			u := &ProgrammingLangUseCase{
-				Ctx:  tt.fields.Ctx,
 				Repo: tt.fields.Repo,
 			}
 
-			mock.EXPECT().List(tt.args.limit).Return(tt.want, nil)
+			mock.EXPECT().List(tt.args.ctx, tt.args.limit).Return(tt.want, nil)
 
-			got, err := u.List(tt.args.limit)
+			got, err := u.List(tt.args.ctx, tt.args.limit)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("ProgrammingLangUseCase.List() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -146,11 +153,11 @@ func TestProgrammingLangUseCase_Get(t *testing.T) {
 	}
 
 	type fields struct {
-		Ctx  context.Context
 		Repo repository.ProgrammingLangRepository
 	}
 	type args struct {
-		id int
+		ctx context.Context
+		id  int
 	}
 
 	type wantErr struct {
@@ -168,11 +175,11 @@ func TestProgrammingLangUseCase_Get(t *testing.T) {
 		{
 			name: "IDで指定したProgrammingLang存在する場合、ProgrammingLangを1件返すこと",
 			fields: fields{
-				Ctx:  context.TODO(),
 				Repo: mock,
 			},
 			args: args{
-				id: 1,
+				ctx: context.Background(),
+				id:  1,
 			},
 			want: model.CreateProgrammingLangs(1)[0],
 			wantErr: wantErr{
@@ -183,11 +190,11 @@ func TestProgrammingLangUseCase_Get(t *testing.T) {
 		{
 			name: "IDで指定したProgrammingLang存在しない場合、nilとエラーを返すこと",
 			fields: fields{
-				Ctx:  context.TODO(),
 				Repo: mock,
 			},
 			args: args{
-				id: 1,
+				ctx: context.Background(),
+				id:  1,
 			},
 			want: model.CreateProgrammingLangs(1)[0],
 			wantErr: wantErr{
@@ -199,13 +206,12 @@ func TestProgrammingLangUseCase_Get(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			u := &ProgrammingLangUseCase{
-				Ctx:  tt.fields.Ctx,
 				Repo: tt.fields.Repo,
 			}
 
-			mock.EXPECT().Read(tt.args.id).Return(tt.want, tt.wantErr.err)
+			mock.EXPECT().Read(tt.args.ctx, tt.args.id).Return(tt.want, tt.wantErr.err)
 
-			got, err := u.Get(tt.args.id)
+			got, err := u.Get(tt.args.ctx, tt.args.id)
 			if (err != nil) != tt.wantErr.isErr {
 				t.Errorf("ProgrammingLangUseCase.Get() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -237,10 +243,10 @@ func TestProgrammingLangUseCase_Create(t *testing.T) {
 	}
 
 	type fields struct {
-		Ctx  context.Context
 		Repo repository.ProgrammingLangRepository
 	}
 	type args struct {
+		ctx   context.Context
 		param *model.ProgrammingLang
 	}
 
@@ -260,10 +266,10 @@ func TestProgrammingLangUseCase_Create(t *testing.T) {
 		{
 			name: "同一のProgrammingLang存在しない場合、ProgrammingLangを登録すること",
 			fields: fields{
-				Ctx:  context.TODO(),
 				Repo: mock,
 			},
 			args: args{
+				ctx:   context.Background(),
 				param: model.CreateProgrammingLangs(1)[0],
 			},
 			want:     model.CreateProgrammingLangs(1)[0],
@@ -276,10 +282,10 @@ func TestProgrammingLangUseCase_Create(t *testing.T) {
 		{
 			name: "同一のProgrammingLang存在する場合、nilとエラーを返すこと",
 			fields: fields{
-				Ctx:  context.TODO(),
 				Repo: mock,
 			},
 			args: args{
+				ctx:   context.Background(),
 				param: model.CreateProgrammingLangs(1)[0],
 			},
 			want:     nil,
@@ -293,17 +299,16 @@ func TestProgrammingLangUseCase_Create(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			u := &ProgrammingLangUseCase{
-				Ctx:  tt.fields.Ctx,
 				Repo: tt.fields.Repo,
 			}
 
-			mock.EXPECT().ReadByName(tt.args.param.Name).Return(tt.readWant, tt.wantErr.err)
+			mock.EXPECT().ReadByName(tt.args.ctx, tt.args.param.Name).Return(tt.readWant, tt.wantErr.err)
 
 			if !tt.wantErr.isErr {
-				mock.EXPECT().Create(tt.args.param).Return(tt.want, tt.wantErr.err)
+				mock.EXPECT().Create(tt.args.ctx, tt.args.param).Return(tt.want, tt.wantErr.err)
 			}
 
-			got, err := u.Create(tt.args.param)
+			got, err := u.Create(tt.args.ctx, tt.args.param)
 
 			if (err != nil) != tt.wantErr.isErr {
 				t.Errorf("ProgrammingLangUseCase.Create() error = %v, wantErr %v", err, tt.wantErr)
@@ -336,10 +341,10 @@ func TestProgrammingLangUseCase_Update(t *testing.T) {
 	}
 
 	type fields struct {
-		Ctx  context.Context
 		Repo repository.ProgrammingLangRepository
 	}
 	type args struct {
+		ctx   context.Context
 		param *model.ProgrammingLang
 	}
 
@@ -359,10 +364,10 @@ func TestProgrammingLangUseCase_Update(t *testing.T) {
 		{
 			name: "同一のProgrammingLang存在する場合、ProgrammingLangを更新すること",
 			fields: fields{
-				Ctx:  context.TODO(),
 				Repo: mock,
 			},
 			args: args{
+				ctx:   context.Background(),
 				param: model.CreateProgrammingLangs(1)[0],
 			},
 			want:     model.CreateProgrammingLangs(1)[0],
@@ -375,10 +380,10 @@ func TestProgrammingLangUseCase_Update(t *testing.T) {
 		{
 			name: "指定したProgrammingLang存在しない場合、nilとエラーを返すこと",
 			fields: fields{
-				Ctx:  context.TODO(),
 				Repo: mock,
 			},
 			args: args{
+				ctx:   context.Background(),
 				param: model.CreateProgrammingLangs(1)[0],
 			},
 			want:     nil,
@@ -392,17 +397,16 @@ func TestProgrammingLangUseCase_Update(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			u := &ProgrammingLangUseCase{
-				Ctx:  tt.fields.Ctx,
 				Repo: tt.fields.Repo,
 			}
 
-			mock.EXPECT().Read(tt.args.param.ID).Return(tt.readWant, tt.wantErr.err)
+			mock.EXPECT().Read(tt.args.ctx, tt.args.param.ID).Return(tt.readWant, tt.wantErr.err)
 
 			if !tt.wantErr.isErr {
-				mock.EXPECT().Update(tt.args.param).Return(tt.want, tt.wantErr.err)
+				mock.EXPECT().Update(tt.args.ctx, tt.args.param).Return(tt.want, tt.wantErr.err)
 			}
 
-			got, err := u.Update(tt.args.param)
+			got, err := u.Update(tt.args.ctx, tt.args.param)
 			if (err != nil) != tt.wantErr.isErr {
 				t.Errorf("ProgrammingLangUseCase.Update() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -437,7 +441,8 @@ func TestProgrammingLangUseCase_Delete(t *testing.T) {
 		Repo repository.ProgrammingLangRepository
 	}
 	type args struct {
-		id int
+		ctx context.Context
+		id  int
 	}
 
 	type wantErr struct {
@@ -454,11 +459,11 @@ func TestProgrammingLangUseCase_Delete(t *testing.T) {
 		{
 			name: "同一のProgrammingLang存在する場合、ProgrammingLangを更新すること",
 			fields: fields{
-				Ctx:  context.TODO(),
 				Repo: mock,
 			},
 			args: args{
-				id: 1,
+				ctx: context.Background(),
+				id:  1,
 			},
 			wantErr: wantErr{
 				isErr: false,
@@ -468,11 +473,11 @@ func TestProgrammingLangUseCase_Delete(t *testing.T) {
 		{
 			name: "IDで指定したProgrammingLang存在しない場合、nilとエラーを返すこと",
 			fields: fields{
-				Ctx:  context.TODO(),
 				Repo: mock,
 			},
 			args: args{
-				id: 2,
+				ctx: context.Background(),
+				id:  2,
 			},
 			wantErr: wantErr{
 				isErr: true,
@@ -483,13 +488,12 @@ func TestProgrammingLangUseCase_Delete(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			u := &ProgrammingLangUseCase{
-				Ctx:  tt.fields.Ctx,
 				Repo: tt.fields.Repo,
 			}
 
-			mock.EXPECT().Delete(tt.args.id).Return(tt.wantErr.err)
+			mock.EXPECT().Delete(tt.args.ctx, tt.args.id).Return(tt.wantErr.err)
 
-			if err := u.Delete(tt.args.id); (err != nil) != tt.wantErr.isErr {
+			if err := u.Delete(tt.args.ctx, tt.args.id); (err != nil) != tt.wantErr.isErr {
 				t.Errorf("ProgrammingLangUseCase.Delete() error = %v, wantErr %v", err, tt.wantErr.isErr)
 			}
 
