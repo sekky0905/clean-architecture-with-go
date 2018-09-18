@@ -26,7 +26,7 @@ func (api *ProgrammingLangAPI) InitAPI(g *gin.RouterGroup) {
 	g.GET(ProgrammingLangAPIPath, api.List)
 	g.GET(fmt.Sprintf("%s/:%s", ProgrammingLangAPIPath, ID), api.Get)
 	g.POST(ProgrammingLangAPIPath, api.Create)
-	g.PUT(fmt.Sprintf(fmt.Sprintf("%s/:%s", ProgrammingLangAPIPath, ID), api.Update))
+	g.PUT(fmt.Sprintf("%s/:%s", ProgrammingLangAPIPath, ID), api.Update)
 	g.DELETE(fmt.Sprintf("%s/:%s", ProgrammingLangAPIPath, ID), api.Delete)
 }
 

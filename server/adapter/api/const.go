@@ -2,7 +2,7 @@ package api
 
 // パスの定義。
 const (
-	ProgrammingLangAPIPath = "/languages"
+	ProgrammingLangAPIPath = "/langs"
 )
 
 // クエリストリングの属性。

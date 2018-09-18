@@ -43,3 +43,4 @@ Temporary Items
 .idea/
 server/vendor/
 server/gobinary
+server/infra/dao/rdb/.env
