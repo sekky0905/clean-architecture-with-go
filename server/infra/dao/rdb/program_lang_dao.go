@@ -171,13 +171,6 @@ func (dao *ProgrammingLangDAO) Update(ctx context.Context, lang *model.Programmi
 		return nil, dao.ErrorMsg(model.DBMethodUpdate, err)
 	}
 
-	id, err := result.LastInsertId()
-	if err != nil {
-		return nil, dao.ErrorMsg(model.DBMethodUpdate, err)
-	}
-
-	lang.ID = int(id)
-
 	return lang, nil
 }
 

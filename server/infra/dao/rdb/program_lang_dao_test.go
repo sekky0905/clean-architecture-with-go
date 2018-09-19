@@ -489,6 +489,7 @@ func TestProgrammingLangDAO_Update(t *testing.T) {
 			args: args{
 				ctx: context.Background(),
 				lang: &model.ProgrammingLang{
+					ID:        1,
 					Name:      model.TestName,
 					Feature:   model.TestFeature,
 					CreatedAt: model.GetTestTime(time.September, 1),
@@ -513,6 +514,7 @@ func TestProgrammingLangDAO_Update(t *testing.T) {
 			args: args{
 				ctx: context.Background(),
 				lang: &model.ProgrammingLang{
+					ID:        1,
 					Name:      model.TestName,
 					CreatedAt: model.GetTestTime(time.September, 1),
 					UpdatedAt: model.GetTestTime(time.September, 2),
