@@ -475,6 +475,7 @@ func TestProgrammingLangAPI_Update(t *testing.T) {
 			name: "リクエストボディのProgrammingLangが適切な場合、ステータスコード200と1件のデータを返すこと",
 			mock: mock{
 				ctx:    context.Background(),
+				id:     1,
 				param:  model.CreateProgrammingLangs(1)[0],
 				result: model.CreateProgrammingLangs(1)[0],
 				err:    nil,
@@ -491,6 +492,7 @@ func TestProgrammingLangAPI_Update(t *testing.T) {
 			name: "リクエストのURLのIDのパラメータと同一のIDを持つデータが存在しない場合、ステータスコード404とエラーメッセージを返すこと",
 			mock: mock{
 				ctx:    context.Background(),
+				id:     100,
 				param:  model.CreateProgrammingLangs(1)[0],
 				result: nil,
 				err:    noDataErr,
@@ -508,6 +510,7 @@ func TestProgrammingLangAPI_Update(t *testing.T) {
 			name: "サーバー側のエラーが発生した場合、ステータスコード500とエラーメッセージを返すこと",
 			mock: mock{
 				ctx:    context.Background(),
+				id:     1,
 				param:  model.CreateProgrammingLangs(1)[0],
 				result: nil,
 				err:    dbErr,
@@ -527,7 +530,7 @@ func TestProgrammingLangAPI_Update(t *testing.T) {
 			r := gin.New()
 			r.PUT(fmt.Sprintf("%s/:%s", api.ProgrammingLangAPIPath, api.ID), handler)
 
-			u.EXPECT().Update(tt.mock.ctx, tt.mock.param).Return(tt.mock.result, tt.mock.err)
+			u.EXPECT().Update(tt.mock.ctx, tt.mock.id, tt.mock.param).Return(tt.mock.result, tt.mock.err)
 
 			rec := httptest.NewRecorder()
 			b, err := json.Marshal(tt.mock.param)

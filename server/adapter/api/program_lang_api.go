@@ -98,7 +98,14 @@ func (api *ProgrammingLangAPI) Update(c *gin.Context) {
 	}
 
 	ctx := c.Request.Context()
-	lang, err := api.UseCase.Update(ctx, params)
+	id, err := getID(c)
+	if err != nil {
+		he := handleError(err)
+		c.JSON(he.code, he.message)
+		return
+	}
+
+	lang, err := api.UseCase.Update(ctx, id, params)
 	if err != nil {
 		he := handleError(err)
 		c.JSON(he.code, he.message)

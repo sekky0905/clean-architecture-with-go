@@ -263,7 +263,7 @@ func TestProgrammingLangDAO_List(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			query := "SELECT id, name, feature, created_at, updated_at FROM programming_languages ORDER BY name LIMIT=\\?"
+			query := "SELECT id, name, feature, created_at, updated_at FROM programming_languages ORDER BY name LIMIT \\?"
 			prep := mock.ExpectPrepare(query)
 
 			if tt.wantErr {
@@ -430,7 +430,7 @@ func TestProgrammingLangDAO_ReadByName(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			query := "SELECT id, name, feature, created_at, updated_at FROM programming_languages WHERE name=\\? ORDER BY name LIMIT=\\?"
+			query := "SELECT id, name, feature, created_at, updated_at FROM programming_languages WHERE name=\\? ORDER BY name LIMIT \\?"
 			prep := mock.ExpectPrepare(query)
 
 			if tt.wantErr {

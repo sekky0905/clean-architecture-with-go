@@ -236,6 +236,8 @@ func TestProgrammingLangUseCase_Create(t *testing.T) {
 
 	mock := mock_repository.NewMockProgrammingLangRepository(ctrl)
 
+	lang := model.CreateProgrammingLangs(1)[0]
+
 	wantErrValue := &model.AlreadyExistError{
 		ID:        1,
 		ModelName: model.ModelNameProgrammingLang,
@@ -250,6 +252,11 @@ func TestProgrammingLangUseCase_Create(t *testing.T) {
 		param *model.ProgrammingLang
 	}
 
+	type readWant struct {
+		result *model.ProgrammingLang
+		err    error
+	}
+
 	type wantErr struct {
 		isErr bool
 		err   error
@@ -260,7 +267,7 @@ func TestProgrammingLangUseCase_Create(t *testing.T) {
 		fields   fields
 		args     args
 		want     *model.ProgrammingLang
-		readWant *model.ProgrammingLang
+		readWant readWant
 		wantErr  wantErr
 	}{
 		{
@@ -270,10 +277,16 @@ func TestProgrammingLangUseCase_Create(t *testing.T) {
 			},
 			args: args{
 				ctx:   context.Background(),
-				param: model.CreateProgrammingLangs(1)[0],
+				param: lang,
 			},
-			want:     model.CreateProgrammingLangs(1)[0],
-			readWant: nil,
+			want: lang,
+			readWant: readWant{
+				result: nil,
+				err: &model.NoSuchDataError{
+					Name:      lang.Name,
+					ModelName: model.ModelNameProgrammingLang,
+				},
+			},
 			wantErr: wantErr{
 				isErr: false,
 				err:   nil,
@@ -286,10 +299,13 @@ func TestProgrammingLangUseCase_Create(t *testing.T) {
 			},
 			args: args{
 				ctx:   context.Background(),
-				param: model.CreateProgrammingLangs(1)[0],
+				param: lang,
 			},
-			want:     nil,
-			readWant: model.CreateProgrammingLangs(1)[0],
+			want: nil,
+			readWant: readWant{
+				result: lang,
+				err:    wantErrValue,
+			},
 			wantErr: wantErr{
 				isErr: true,
 				err:   wantErrValue,
@@ -302,7 +318,7 @@ func TestProgrammingLangUseCase_Create(t *testing.T) {
 				Repo: tt.fields.Repo,
 			}
 
-			mock.EXPECT().ReadByName(tt.args.ctx, tt.args.param.Name).Return(tt.readWant, tt.wantErr.err)
+			mock.EXPECT().ReadByName(tt.args.ctx, tt.args.param.Name).Return(tt.readWant.result, tt.readWant.err)
 
 			if !tt.wantErr.isErr {
 				mock.EXPECT().Create(tt.args.ctx, tt.args.param).Return(tt.want, tt.wantErr.err)
@@ -334,18 +350,20 @@ func TestProgrammingLangUseCase_Update(t *testing.T) {
 
 	mock := mock_repository.NewMockProgrammingLangRepository(ctrl)
 
-	wantErrValue := &model.NoSuchDataError{
-		ID:        1,
-		ModelName: model.ModelNameProgrammingLang,
-		Name:      model.CreateProgrammingLangs(1)[0].Name,
-	}
+	lang := model.CreateProgrammingLangs(1)[0]
 
 	type fields struct {
 		Repo repository.ProgrammingLangRepository
 	}
 	type args struct {
 		ctx   context.Context
+		id    int
 		param *model.ProgrammingLang
+	}
+
+	type readWant struct {
+		result *model.ProgrammingLang
+		err    error
 	}
 
 	type wantErr struct {
@@ -358,7 +376,7 @@ func TestProgrammingLangUseCase_Update(t *testing.T) {
 		fields   fields
 		args     args
 		want     *model.ProgrammingLang
-		readWant *model.ProgrammingLang
+		readWant readWant
 		wantErr  wantErr
 	}{
 		{
@@ -368,10 +386,14 @@ func TestProgrammingLangUseCase_Update(t *testing.T) {
 			},
 			args: args{
 				ctx:   context.Background(),
-				param: model.CreateProgrammingLangs(1)[0],
+				id:    1,
+				param: lang,
 			},
-			want:     model.CreateProgrammingLangs(1)[0],
-			readWant: model.CreateProgrammingLangs(1)[0],
+			want: lang,
+			readWant: readWant{
+				result: lang,
+				err:    nil,
+			},
 			wantErr: wantErr{
 				isErr: false,
 				err:   nil,
@@ -384,13 +406,25 @@ func TestProgrammingLangUseCase_Update(t *testing.T) {
 			},
 			args: args{
 				ctx:   context.Background(),
-				param: model.CreateProgrammingLangs(1)[0],
+				id:    100,
+				param: lang,
 			},
-			want:     nil,
-			readWant: nil,
+			want: nil,
+			readWant: readWant{
+				result: nil,
+				err: &model.DBError{
+					ModelName: model.ModelNameProgrammingLang,
+					DBMethod:  model.DBMethodRead,
+					Detail:    model.TestDBSomeErr,
+				},
+			},
 			wantErr: wantErr{
 				isErr: true,
-				err:   wantErrValue,
+				err: &model.NoSuchDataError{
+					ID:        100,
+					ModelName: model.ModelNameProgrammingLang,
+					Name:      lang.Name,
+				},
 			},
 		},
 	}
@@ -400,15 +434,15 @@ func TestProgrammingLangUseCase_Update(t *testing.T) {
 				Repo: tt.fields.Repo,
 			}
 
-			mock.EXPECT().Read(tt.args.ctx, tt.args.param.ID).Return(tt.readWant, tt.wantErr.err)
+			mock.EXPECT().Read(tt.args.ctx, tt.args.id).Return(tt.readWant.result, tt.readWant.err)
 
 			if !tt.wantErr.isErr {
 				mock.EXPECT().Update(tt.args.ctx, tt.args.param).Return(tt.want, tt.wantErr.err)
 			}
 
-			got, err := u.Update(tt.args.ctx, tt.args.param)
+			got, err := u.Update(tt.args.ctx, tt.args.id, tt.args.param)
 			if (err != nil) != tt.wantErr.isErr {
-				t.Errorf("ProgrammingLangUseCase.Update() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("ProgrammingLangUseCase.Update() error = %v, wantErr %v", err, tt.wantErr.isErr)
 				return
 			}
 

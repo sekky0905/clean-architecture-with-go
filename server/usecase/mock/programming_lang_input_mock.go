@@ -74,16 +74,16 @@ func (mr *MockProgrammingLangInputPortMockRecorder) Create(ctx, param interface{
 }
 
 // Update mocks base method
-func (m *MockProgrammingLangInputPort) Update(ctx context.Context, param *model.ProgrammingLang) (*model.ProgrammingLang, error) {
-	ret := m.ctrl.Call(m, "Update", ctx, param)
+func (m *MockProgrammingLangInputPort) Update(ctx context.Context, id int, param *model.ProgrammingLang) (*model.ProgrammingLang, error) {
+	ret := m.ctrl.Call(m, "Update", ctx, id, param)
 	ret0, _ := ret[0].(*model.ProgrammingLang)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Update indicates an expected call of Update
-func (mr *MockProgrammingLangInputPortMockRecorder) Update(ctx, param interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockProgrammingLangInputPort)(nil).Update), ctx, param)
+func (mr *MockProgrammingLangInputPortMockRecorder) Update(ctx, id, param interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockProgrammingLangInputPort)(nil).Update), ctx, id, param)
 }
 
 // Delete mocks base method
