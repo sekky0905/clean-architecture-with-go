@@ -72,6 +72,7 @@ func (u *ProgrammingLangUseCase) Update(ctx context.Context, id int, param *mode
 		return nil, errors.WithStack(err)
 	}
 
+	lang.ID = id
 	lang.Name = param.Name
 	lang.Feature = param.Feature
 	lang.UpdatedAt = time.Now().UTC()
