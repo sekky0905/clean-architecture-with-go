@@ -39,7 +39,6 @@ deps:
 	$(GOGET) github.com/kisielk/errcheck
 	$(GOGET) gopkg.in/DATA-DOG/go-sqlmock.v1
 	$(GOGET) github.com/go-sql-driver/mysql
-	dep init
 	dep ensure
 
 .PHONY: precommit
