@@ -9,8 +9,8 @@ BINARY_NAME=gobinary
 .PHONY: init
 init: clean deps test build precommit
 
-.PHONY: start
-start: test build precommit
+.PHONY: all
+all: test build precommit start
 
 .PHONY: build
 build:
@@ -52,3 +52,7 @@ precommit :
 	# エラーハンドリングの確認
 	# test と　Close の部分を無視している
 	errcheck -ignoretests -ignore 'Close' ./...
+
+.PHONY: start
+start :
+	./gobinary
