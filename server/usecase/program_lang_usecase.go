@@ -44,7 +44,7 @@ func (u *ProgrammingLangUseCase) Create(ctx context.Context, param *model.Progra
 		}
 	}
 
-	if err != nil {
+	if _, ok := errors.Cause(err).(*model.NoSuchDataError); !ok {
 		return nil, errors.WithStack(err)
 	}
 
@@ -60,22 +60,23 @@ func (u *ProgrammingLangUseCase) Create(ctx context.Context, param *model.Progra
 }
 
 // Update は、ProgrammingLangを更新する。
-func (u *ProgrammingLangUseCase) Update(ctx context.Context, param *model.ProgrammingLang) (*model.ProgrammingLang, error) {
-	lang, err := u.Repo.Read(ctx, param.ID)
+func (u *ProgrammingLangUseCase) Update(ctx context.Context, id int, param *model.ProgrammingLang) (*model.ProgrammingLang, error) {
+	lang, err := u.Repo.Read(ctx, id)
 	if lang == nil {
 		return nil, &model.NoSuchDataError{
-			ID:        param.ID,
+			ID:        id,
 			Name:      param.Name,
 			ModelName: model.ModelNameProgrammingLang,
 		}
-	}
-
-	if err != nil {
+	} else if err != nil {
 		return nil, errors.WithStack(err)
 	}
 
-	param.UpdatedAt = time.Now().UTC()
-	return u.Repo.Update(ctx, param)
+	lang.Name = param.Name
+	lang.Feature = param.Feature
+	lang.UpdatedAt = time.Now().UTC()
+
+	return u.Repo.Update(ctx, lang)
 }
 
 // Delete は、ProgrammingLangを削除する。

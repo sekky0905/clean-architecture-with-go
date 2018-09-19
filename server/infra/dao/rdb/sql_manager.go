@@ -22,7 +22,7 @@ func NewSQLManager() SQLManagerInterface {
 		panic(err.Error())
 	}
 
-	conn, err := sql.Open("mysql", fmt.Sprintf("%s:%s@/%s", os.Getenv("USER_NAME"), os.Getenv("PASSWORD"), os.Getenv("DATABASE_NAME")))
+	conn, err := sql.Open("mysql", fmt.Sprintf("%s:%s@/%s?parseTime=true", os.Getenv("USER_NAME"), os.Getenv("PASSWORD"), os.Getenv("DATABASE_NAME")))
 	if err != nil {
 		panic(err.Error())
 	}
