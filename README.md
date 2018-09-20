@@ -6,20 +6,20 @@ The sample codes of Clean Architecture with Go.
 1 clone this repository.
 
 ```
+cd ${Your_Working_Directory}
 git clone git@github.com:SekiguchiKai/clean-architecture-with-go.git
 ```
 
 2 initialize the project by Makefile.
 
 ```
-cd $GOPATH/src/github.com/SekiguchiKai/clean-architecture-with-go/server
+cd clean-architecture-with-go/server
 make init
 ```
 
 3 start application.
 
 ```
-cd $GOPATH/src/github.com/SekiguchiKai/clean-architecture-with-go/server
 make all
 ```
 
