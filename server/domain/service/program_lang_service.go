@@ -2,8 +2,8 @@ package service
 
 import (
 	"github.com/SekiguchiKai/clean-architecture-with-go/server/domain/model"
-	"github.com/SekiguchiKai/shopping-list/server/util"
 	"github.com/pkg/errors"
+	"github.com/SekiguchiKai/clean-architecture-with-go/server/util"
 )
 
 // NewProgrammingLang は、ProgrammingLangを生成し、返す。
