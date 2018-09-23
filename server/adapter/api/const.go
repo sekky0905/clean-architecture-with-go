@@ -10,6 +10,12 @@ const (
 	Limit = "limit"
 )
 
+// Limitの定義。
+const (
+	MaxLimit     = 100
+	DefaultLimit = 20
+)
+
 // パラメータの属性
 const (
 	ID = "id"

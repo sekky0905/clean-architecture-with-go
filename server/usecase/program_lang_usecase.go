@@ -24,7 +24,6 @@ func NewProgrammingLangUseCase(repo repository.ProgrammingLangRepository) input.
 
 // List は、ProgrammingLangの一覧を返す。
 func (u *ProgrammingLangUseCase) List(ctx context.Context, limit int) ([]*model.ProgrammingLang, error) {
-	limit = ManageLimit(limit, MaxLimit, MinLimit, DefaultLimit)
 	return u.Repo.List(ctx, limit)
 }
 
