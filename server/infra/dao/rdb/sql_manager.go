@@ -3,10 +3,6 @@ package rdb
 import (
 	"context"
 	"database/sql"
-	"fmt"
-	"os"
-
-	"github.com/SekiguchiKai/clean-architecture-with-go/server/util"
 	// SQL Driver。
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -18,11 +14,7 @@ type SQLManager struct {
 
 // NewSQLManager は、SQLManagerを生成し、返す。
 func NewSQLManager() SQLManagerInterface {
-	if err := util.LoadEnv("./infra/dao/rdb/.env"); err != nil {
-		panic(err.Error())
-	}
-
-	conn, err := sql.Open("mysql", fmt.Sprintf("%s:%s@/%s?parseTime=true", os.Getenv("USER_NAME"), os.Getenv("PASSWORD"), os.Getenv("DATABASE_NAME")))
+	conn, err := sql.Open("mysql", "root:@tcp(db:3306)/sample?charset=utf8mb4&parseTime=True")
 	if err != nil {
 		panic(err.Error())
 	}

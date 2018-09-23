@@ -7,10 +7,10 @@ GOGET=$(GOCMD) get
 BINARY_NAME=gobinary
 
 .PHONY: init
-init: clean deps test build precommit
+init: clean deps test precommit build run
 
 .PHONY: all
-all: test build precommit start
+all: test precommit build run
 
 .PHONY: build
 build:
@@ -24,16 +24,15 @@ test:
 clean:
 	$(GOCLEAN)
 	rm -f $(BINARY_NAME)
-	rm -f $(BINARY_UNIX)
 
 .PHONY: run
 run:
-	$(GOBUILD) -o $(BINARY_NAME) -v ./...
 	./$(BINARY_NAME)
 
 .PHONY: deps
 deps:
 	$(GOGET) github.com/golang/dep/cmd/dep
+	$(GOGET) github.com/gin-gonic/gin
 	$(GOGET) golang.org/x/lint/golint
 	$(GOGET) golang.org/x/tools/cmd/goimports
 	$(GOGET) github.com/kisielk/errcheck
@@ -51,7 +50,3 @@ precommit :
 	# エラーハンドリングの確認
 	# test と　Close の部分を無視している
 	errcheck -ignoretests -ignore 'Close' ./...
-
-.PHONY: start
-start :
-	./gobinary

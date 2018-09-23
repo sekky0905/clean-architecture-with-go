@@ -8,7 +8,6 @@ import (
 	"net/http/httptest"
 	"reflect"
 	"testing"
-
 	"context"
 
 	"github.com/SekiguchiKai/clean-architecture-with-go/server/adapter/api"
