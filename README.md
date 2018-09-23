@@ -20,7 +20,7 @@ make init
 3 start application.
 
 ```
-make all
+docker-compose up -d
 ```
 
 ### Access Point
