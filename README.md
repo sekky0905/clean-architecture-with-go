@@ -50,9 +50,6 @@ http://localhost:8080/v1/langs/${id}
 http://localhost:8080/v1/langs/${id}
 ```
 
-## Caution
-At this moment, you should configure DB and make .env file by yourself .
-
 ## Reference
 https://blog.tai2.net/the_clean_architecture.html
 
