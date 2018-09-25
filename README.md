@@ -50,7 +50,7 @@ http://localhost:8080/v1/langs/${id}
 http://localhost:8080/v1/langs/${id}
 ```
 
-#### json Data Format sample
+#### Json Data Format sample
 
 ```
 {
