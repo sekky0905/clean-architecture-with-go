@@ -67,14 +67,14 @@ func (dao *ProgrammingLangDAO) List(ctx context.Context, limit int) ([]*model.Pr
 	query := "SELECT id, name, feature, created_at, updated_at FROM programming_langs ORDER BY name LIMIT ?"
 	langSlice, err :=   dao.list(ctx, query, limit)
 
-	if err != nil {
-		return nil, errors.WithStack(err)
-	}
-
 	if len(langSlice) == 0 {
 		return nil, &model.NoSuchDataError{
 			ModelName: model.ModelNameProgrammingLang,
 		}
+	}
+
+	if err != nil {
+		return nil, errors.WithStack(err)
 	}
 
 	return langSlice, nil
@@ -85,15 +85,16 @@ func (dao *ProgrammingLangDAO) Read(ctx context.Context, id int) (*model.Program
 	query := "SELECT id, name, feature, created_at, updated_at FROM programming_langs WHERE ID=?"
 
 	langSlice, err :=  dao.list(ctx, query, id)
-	if err != nil {
-		return nil, errors.WithStack(err)
-	}
 
 	if len(langSlice) == 0 {
 		return nil, &model.NoSuchDataError{
 			ID:     id,
 			ModelName: model.ModelNameProgrammingLang,
 		}
+	}
+
+	if err != nil {
+		return nil, errors.WithStack(err)
 	}
 
 	return langSlice[0], nil
@@ -103,15 +104,16 @@ func (dao *ProgrammingLangDAO) Read(ctx context.Context, id int) (*model.Program
 func (dao *ProgrammingLangDAO) ReadByName(ctx context.Context, name string) (*model.ProgrammingLang, error) {
 	query := "SELECT id, name, feature, created_at, updated_at FROM programming_langs WHERE name=? ORDER BY name LIMIT ?"
 	langSlice, err := dao.list(ctx, query, name, 1)
-	if err != nil {
-		return nil, errors.WithStack(err)
-	}
 
 	if len(langSlice) == 0 {
 		return nil, &model.NoSuchDataError{
 			Name:      name,
 			ModelName: model.ModelNameProgrammingLang,
 		}
+	}
+
+	if err != nil {
+		return nil, errors.WithStack(err)
 	}
 
 	return langSlice[0], nil
