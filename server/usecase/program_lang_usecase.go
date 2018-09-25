@@ -24,7 +24,6 @@ func NewProgrammingLangUseCase(repo repository.ProgrammingLangRepository) input.
 
 // List は、ProgrammingLangの一覧を返す。
 func (u *ProgrammingLangUseCase) List(ctx context.Context, limit int) ([]*model.ProgrammingLang, error) {
-	limit = ManageLimit(limit, MaxLimit, MinLimit, DefaultLimit)
 	return u.Repo.List(ctx, limit)
 }
 
@@ -44,7 +43,7 @@ func (u *ProgrammingLangUseCase) Create(ctx context.Context, param *model.Progra
 		}
 	}
 
-	if _, ok := errors.Cause(err).(*model.NoSuchDataError); !ok {
+	if _, ok := errors.Cause(err).(*model.AlreadyExistError); !ok {
 		return nil, errors.WithStack(err)
 	}
 
@@ -82,5 +81,15 @@ func (u *ProgrammingLangUseCase) Update(ctx context.Context, id int, param *mode
 
 // Delete は、ProgrammingLangを削除する。
 func (u *ProgrammingLangUseCase) Delete(ctx context.Context, id int) error {
+	lang, err := u.Repo.Read(ctx, id)
+	if lang == nil {
+		return  &model.NoSuchDataError{
+			ID:        id,
+			ModelName: model.ModelNameProgrammingLang,
+		}
+	} else if err != nil {
+		return  errors.WithStack(err)
+	}
+
 	return u.Repo.Delete(ctx, id)
 }

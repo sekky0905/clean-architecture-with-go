@@ -8,7 +8,6 @@ import (
 	"net/http/httptest"
 	"reflect"
 	"testing"
-
 	"context"
 
 	"github.com/SekiguchiKai/clean-architecture-with-go/server/adapter/api"
@@ -71,9 +70,12 @@ func TestProgrammingLangAPI_List(t *testing.T) {
 		Detail:    "Test",
 	}
 
+	type params struct {
+		limit    string
+	}
+
 	type mock struct {
 		ctx      context.Context
-		errLimit string
 		limit    int
 		result   []*model.ProgrammingLang
 		err      error
@@ -87,11 +89,95 @@ func TestProgrammingLangAPI_List(t *testing.T) {
 
 	tests := []struct {
 		name string
+		params params
 		mock mock
 		want want
 	}{
 		{
 			name: "リクエストのクエリパラメータが20で、データが20件以上存在する場合、ステータスコード200と20件のデータを返すこと",
+			params:params{
+				limit:"20",
+			},
+			mock: mock{
+				ctx:    context.Background(),
+				limit:  20,
+				result: model.CreateProgrammingLangs(20),
+				err:    nil,
+			},
+			want: want{
+				code:   http.StatusOK,
+				result: model.CreateProgrammingLangs(20),
+			},
+		},
+		{
+			name: "リクエストのクエリパラメータが6で、データが6件以上存在する場合、ステータスコード200と6件のデータを返すこと",
+			params:params{
+				limit:"6",
+			},
+			mock: mock{
+				ctx:    context.Background(),
+				limit:  6,
+				result: model.CreateProgrammingLangs(6),
+				err:    nil,
+			},
+			want: want{
+				code:   http.StatusOK,
+				result: model.CreateProgrammingLangs(6),
+			},
+		},
+		{
+			name: "リクエストのクエリパラメータが4で、データが20件以上存在する場合、ステータスコード200と20件のデータを返すこと",
+			params:params{
+				limit:"4",
+			},
+			mock: mock{
+				ctx:    context.Background(),
+				limit:  20,
+				result: model.CreateProgrammingLangs(20),
+				err:    nil,
+			},
+			want: want{
+				code:   http.StatusOK,
+				result: model.CreateProgrammingLangs(20),
+			},
+		},
+		{
+			name: "リクエストのクエリパラメータが99で、データが99件以上存在する場合、ステータスコード200と99件のデータを返すこと",
+			params:params{
+				limit:"99",
+			},
+			mock: mock{
+				ctx:    context.Background(),
+				limit:  99,
+				result: model.CreateProgrammingLangs(99),
+				err:    nil,
+			},
+			want: want{
+				code:   http.StatusOK,
+				result: model.CreateProgrammingLangs(99),
+			},
+		},
+		{
+			name: "リクエストのクエリパラメータが101で、データが20件以上存在する場合、ステータスコード200と20件のデータを返すこと",
+			params:params{
+				limit:"101",
+			},
+			mock: mock{
+				ctx:    context.Background(),
+				limit:  20,
+				result: model.CreateProgrammingLangs(20),
+				err:    nil,
+			},
+			want: want{
+				code:   http.StatusOK,
+				result: model.CreateProgrammingLangs(20),
+			},
+		},
+		{
+			name: "リクエストのクエリパラメータの指定がなく、データが20件以上存在する場合、ステータスコード200と20件のデータを返すこと",
+			params:params{
+				limit:"",
+			},
 			mock: mock{
 				ctx:    context.Background(),
 				limit:  20,
@@ -105,9 +191,11 @@ func TestProgrammingLangAPI_List(t *testing.T) {
 		},
 		{
 			name: "リクエストのクエリパラメータが文字列の場合、ステータスコード400とエラーメッセージを返すこと",
+			params:params{
+				limit:"test",
+			},
 			mock: mock{
 				ctx:      context.Background(),
-				errLimit: "test",
 				result:   nil,
 				err:      paramErr,
 			},
@@ -119,6 +207,9 @@ func TestProgrammingLangAPI_List(t *testing.T) {
 		},
 		{
 			name: "サーバー側のエラーが発生した場合、ステータスコード500とエラーメッセージを返すこと",
+			params:params{
+				limit:"20",
+			},
 			mock: mock{
 				ctx:    context.Background(),
 				limit:  20,
@@ -137,9 +228,8 @@ func TestProgrammingLangAPI_List(t *testing.T) {
 			r := gin.New()
 			r.GET(api.ProgrammingLangAPIPath, handler)
 
-			url := fmt.Sprintf("%s?%s=%s", api.ProgrammingLangAPIPath, api.Limit, tt.mock.errLimit)
-			if util.IsEmpty(tt.mock.errLimit) {
-				url = fmt.Sprintf("%s?%s=%d", api.ProgrammingLangAPIPath, api.Limit, tt.mock.limit)
+			url := fmt.Sprintf("%s?%s=%s", api.ProgrammingLangAPIPath, api.Limit, tt.params.limit)
+			if !reflect.DeepEqual(tt.mock.err, paramErr) {
 				u.EXPECT().List(tt.mock.ctx, tt.mock.limit).Return(tt.mock.result, tt.mock.err)
 			}
 
@@ -699,3 +789,4 @@ func TestProgrammingLangAPI_Delete(t *testing.T) {
 		})
 	}
 }
+

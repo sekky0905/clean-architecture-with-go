@@ -2,12 +2,6 @@
 
 
 [[projects]]
-  branch = "develop"
-  name = "github.com/SekiguchiKai/clean-architecture-go"
-  packages = ["server/domain/model"]
-  revision = "97f0c03103e5fb5b7d6c5b79dd4fd84ba20a49ce"
-
-[[projects]]
   branch = "master"
   name = "github.com/gin-contrib/sse"
   packages = ["."]
@@ -41,12 +35,6 @@
   packages = ["proto"]
   revision = "aa810b61a9c79d51363740d207bb46cf8e620ed5"
   version = "v1.2.0"
-
-[[projects]]
-  name = "github.com/joho/godotenv"
-  packages = ["."]
-  revision = "23d116af351c84513e1946b527c88823e476be13"
-  version = "v1.3.0"
 
 [[projects]]
   name = "github.com/json-iterator/go"
@@ -123,6 +111,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "41f26ab9402c381aa8f7888173de72de10081b26fefa600c6e53dd3187d14746"
+  inputs-digest = "3711685058a6f382d69f79c97a89dcd2a05d57872eb178ac4683ab12d9e52165"
   solver-name = "gps-cdcl"
   solver-version = 1

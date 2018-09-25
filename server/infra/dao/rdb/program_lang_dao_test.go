@@ -159,7 +159,7 @@ func TestProgrammingLangDAO_Create(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			query := "INSERT INTO programming_languages"
+			query := "INSERT INTO programming_langs"
 			prep := mock.ExpectPrepare(query)
 
 			if tt.rowAffected == 0 {
@@ -263,7 +263,7 @@ func TestProgrammingLangDAO_List(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			query := "SELECT id, name, feature, created_at, updated_at FROM programming_languages ORDER BY name LIMIT \\?"
+			query := "SELECT id, name, feature, created_at, updated_at FROM programming_langs ORDER BY name LIMIT \\?"
 			prep := mock.ExpectPrepare(query)
 
 			if tt.wantErr {
@@ -349,7 +349,7 @@ func TestProgrammingLangDAO_Read(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			query := "SELECT id, name, feature, created_at, updated_at FROM programming_languages WHERE ID=\\?"
+			query := "SELECT id, name, feature, created_at, updated_at FROM programming_langs WHERE ID=\\?"
 			prep := mock.ExpectPrepare(query)
 
 			if tt.wantErr {
@@ -430,7 +430,7 @@ func TestProgrammingLangDAO_ReadByName(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			query := "SELECT id, name, feature, created_at, updated_at FROM programming_languages WHERE name=\\? ORDER BY name LIMIT \\?"
+			query := "SELECT id, name, feature, created_at, updated_at FROM programming_langs WHERE name=\\? ORDER BY name LIMIT \\?"
 			prep := mock.ExpectPrepare(query)
 
 			if tt.wantErr {
@@ -575,7 +575,7 @@ func TestProgrammingLangDAO_Update(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			query := "UPDATE programming_languages SET name=\\?, feature=\\?, created_at=\\?, updated_at=\\? WHERE id=\\?"
+			query := "UPDATE programming_langs SET name=\\?, feature=\\?, created_at=\\?, updated_at=\\? WHERE id=\\?"
 			prep := mock.ExpectPrepare(query)
 
 			if tt.wantErr {
@@ -660,7 +660,7 @@ func TestProgrammingLangDAO_Delete(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			query := "DELETE FROM programming_languages WHERE id=\\?"
+			query := "DELETE FROM programming_langs WHERE id=\\?"
 			prep := mock.ExpectPrepare(query)
 
 			if tt.wantErr {
