@@ -57,7 +57,7 @@ You can Post or Put Data like the sample below.
 ```
 {
   "name":"JavaScript",
- "feature":"動的型付け言語。Webブラウザで動作する"
+ "feature":"Dynamic type. Works on Web browser."
  }
 ```
 
