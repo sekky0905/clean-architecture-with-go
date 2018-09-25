@@ -9,3 +9,4 @@ CREATE TABLE programming_langs (
 
 ALTER DATABASE sample CHARACTER SET utf8mb4;
 ALTER TABLE programming_langs CONVERT TO CHARACTER SET utf8mb4;
+

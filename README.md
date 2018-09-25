@@ -6,7 +6,7 @@ The sample codes of Clean Architecture with Go.
 1 clone this repository.
 
 ```
-cd ${Your_Working_Directory}
+cd ${Your_Working_Directory(Working Directory should be on your $GOPATH/src)}
 git clone git@github.com:SekiguchiKai/clean-architecture-with-go.git
 ```
 
@@ -48,6 +48,17 @@ http://localhost:8080/v1/langs/${id}
 #### DELETE
 ```
 http://localhost:8080/v1/langs/${id}
+```
+
+#### Json Data Format sample
+
+You can Post or Put Data like the sample below.
+
+```
+{
+  "name":"JavaScript",
+ "feature":"Dynamic type. Works on Web browser."
+ }
 ```
 
 ## Reference
