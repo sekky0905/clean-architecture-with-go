@@ -148,6 +148,7 @@ func (dao *ProgrammingLangDAO) list(ctx context.Context, query string, args ...i
 		if err != nil {
 			return nil, dao.ErrorMsg(model.DBMethodList, err)
 		}
+
 		langSlice = append(langSlice, lang)
 	}
 
