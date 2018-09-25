@@ -65,7 +65,56 @@ func (dao *ProgrammingLangDAO) Create(ctx context.Context, lang *model.Programmi
 // List は、レコードの一覧を取得して返す。
 func (dao *ProgrammingLangDAO) List(ctx context.Context, limit int) ([]*model.ProgrammingLang, error) {
 	query := "SELECT id, name, feature, created_at, updated_at FROM programming_langs ORDER BY name LIMIT ?"
-	return dao.list(ctx, query, limit)
+	langSlice, err :=   dao.list(ctx, query, limit)
+
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	if len(langSlice) == 0 {
+		return nil, &model.NoSuchDataError{
+			ModelName: model.ModelNameProgrammingLang,
+		}
+	}
+
+	return langSlice, nil
+}
+
+// Read は、レコードを1件取得して返す。
+func (dao *ProgrammingLangDAO) Read(ctx context.Context, id int) (*model.ProgrammingLang, error) {
+	query := "SELECT id, name, feature, created_at, updated_at FROM programming_langs WHERE ID=?"
+
+	langSlice, err :=  dao.list(ctx, query, id)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	if len(langSlice) == 0 {
+		return nil, &model.NoSuchDataError{
+			ID:     id,
+			ModelName: model.ModelNameProgrammingLang,
+		}
+	}
+
+	return langSlice[0], nil
+}
+
+// ReadByName は、指定したNameを保持するレコードを1返す。
+func (dao *ProgrammingLangDAO) ReadByName(ctx context.Context, name string) (*model.ProgrammingLang, error) {
+	query := "SELECT id, name, feature, created_at, updated_at FROM programming_langs WHERE name=? ORDER BY name LIMIT ?"
+	langSlice, err := dao.list(ctx, query, name, 1)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	if len(langSlice) == 0 {
+		return nil, &model.NoSuchDataError{
+			Name:      name,
+			ModelName: model.ModelNameProgrammingLang,
+		}
+	}
+
+	return langSlice[0], nil
 }
 
 // list は、レコードの一覧を取得して返す。
@@ -101,52 +150,6 @@ func (dao *ProgrammingLangDAO) list(ctx context.Context, query string, args ...i
 	}
 
 	return langSlice, nil
-}
-
-// Read は、レコードを1件取得して返す。
-func (dao *ProgrammingLangDAO) Read(ctx context.Context, id int) (*model.ProgrammingLang, error) {
-	query := "SELECT id, name, feature, created_at, updated_at FROM programming_langs WHERE ID=?"
-
-	stmt, err := dao.SQLManager.PrepareContext(ctx, query)
-	if err != nil {
-		return nil, dao.ErrorMsg(model.DBMethodRead, err)
-	}
-	defer stmt.Close()
-
-	row := stmt.QueryRowContext(ctx, id)
-	lang := &model.ProgrammingLang{}
-
-	err = row.Scan(
-		&lang.ID,
-		&lang.Name,
-		&lang.Feature,
-		&lang.CreatedAt,
-		&lang.UpdatedAt,
-	)
-
-	if err != nil {
-		return nil, dao.ErrorMsg(model.DBMethodRead, err)
-	}
-
-	return lang, nil
-}
-
-// ReadByName は、指定したNameを保持するレコードを1返す。
-func (dao *ProgrammingLangDAO) ReadByName(ctx context.Context, name string) (*model.ProgrammingLang, error) {
-	query := "SELECT id, name, feature, created_at, updated_at FROM programming_langs WHERE name=? ORDER BY name LIMIT ?"
-	langSlice, err := dao.list(ctx, query, name, 1)
-	if err != nil {
-		return nil, errors.WithStack(err)
-	}
-
-	if len(langSlice) == 0 {
-		return nil, &model.NoSuchDataError{
-			Name:      name,
-			ModelName: model.ModelNameProgrammingLang,
-		}
-	}
-
-	return langSlice[0], nil
 }
 
 // Update は、レコードを1件更新する。
