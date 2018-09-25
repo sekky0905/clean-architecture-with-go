@@ -13,6 +13,7 @@ const (
 // Limitの定義。
 const (
 	MaxLimit     = 100
+	MinLimit = 5
 	DefaultLimit = 20
 )
 
