@@ -52,6 +52,8 @@ http://localhost:8080/v1/langs/${id}
 
 #### Json Data Format sample
 
+You can Post or Put Data like the sample below.
+
 ```
 {
   "name":"JavaScript",
