@@ -7,7 +7,7 @@ GOGET=$(GOCMD) get
 BINARY_NAME=gobinary
 
 .PHONY: init
-init: clean deps test precommit build run
+init: clean deps test precommit build
 
 .PHONY: all
 all: test precommit build run
