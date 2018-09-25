@@ -43,7 +43,7 @@ func (u *ProgrammingLangUseCase) Create(ctx context.Context, param *model.Progra
 		}
 	}
 
-	if _, ok := errors.Cause(err).(*model.AlreadyExistError); !ok {
+	if _, ok := errors.Cause(err).(*model.NoSuchDataError); !ok {
 		return nil, errors.WithStack(err)
 	}
 

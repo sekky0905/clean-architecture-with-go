@@ -265,7 +265,7 @@ func TestProgrammingLangUseCase_Create(t *testing.T) {
 			want: lang,
 			readWant: readWant{
 				result: nil,
-				err: &model.AlreadyExistError{
+				err: &model.NoSuchDataError{
 					Name:      lang.Name,
 					ModelName: model.ModelNameProgrammingLang,
 				},
