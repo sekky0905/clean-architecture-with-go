@@ -126,6 +126,22 @@ func TestProgrammingLangAPI_List(t *testing.T) {
 			},
 		},
 		{
+			name: "リクエストのクエリパラメータが4で、データが20件以上存在する場合、ステータスコード200と20件のデータを返すこと",
+			params:params{
+				limit:"4",
+			},
+			mock: mock{
+				ctx:    context.Background(),
+				limit:  20,
+				result: model.CreateProgrammingLangs(20),
+				err:    nil,
+			},
+			want: want{
+				code:   http.StatusOK,
+				result: model.CreateProgrammingLangs(20),
+			},
+		},
+		{
 			name: "リクエストのクエリパラメータが99で、データが99件以上存在する場合、ステータスコード200と99件のデータを返すこと",
 			params:params{
 				limit:"99",

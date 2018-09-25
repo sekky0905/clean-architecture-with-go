@@ -39,7 +39,7 @@ func (api *ProgrammingLangAPI) List(c *gin.Context) {
 		return
 	}
 
-	limit = ManageLimit(limit, MaxLimit, DefaultLimit)
+	limit = ManageLimit(limit, MaxLimit, MinLimit, DefaultLimit)
 
 	ctx := c.Request.Context()
 	langSlice, err := api.UseCase.List(ctx, limit)

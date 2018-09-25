@@ -41,8 +41,8 @@ func getLimit(c *gin.Context) (int, error) {
 }
 
 // ManageLimit は、Limitを制御する。
-func ManageLimit(targetLimit, maxLimit, defaultLimit int) int {
-	if  maxLimit < targetLimit {
+func ManageLimit(targetLimit, maxLimit, minLimit, defaultLimit int) int {
+	if  maxLimit < targetLimit ||  targetLimit < minLimit {
 		return defaultLimit
 	}
 	return targetLimit
