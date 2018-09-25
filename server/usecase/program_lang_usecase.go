@@ -81,5 +81,15 @@ func (u *ProgrammingLangUseCase) Update(ctx context.Context, id int, param *mode
 
 // Delete は、ProgrammingLangを削除する。
 func (u *ProgrammingLangUseCase) Delete(ctx context.Context, id int) error {
+	lang, err := u.Repo.Read(ctx, id)
+	if lang == nil {
+		return  &model.NoSuchDataError{
+			ID:        id,
+			ModelName: model.ModelNameProgrammingLang,
+		}
+	} else if err != nil {
+		return  errors.WithStack(err)
+	}
+
 	return u.Repo.Delete(ctx, id)
 }
