@@ -3,7 +3,6 @@ package model
 import "fmt"
 
 // RequiredError は、必要なものが存在しない場合のエラー。
-// 複数のpackageで使用するため、interfaceを通してではなく、構造体のインスタンスを使用する。
 type RequiredError struct {
 	Property string
 }
@@ -14,7 +13,6 @@ func (e *RequiredError) Error() string {
 }
 
 // InvalidPropertyError は、Propertyが不適切な場合のエラー。
-// 複数のpackageで使用するため、interfaceを通してではなく、構造体のインスタンスを使用する
 type InvalidPropertyError struct {
 	Property string
 	Message  string
@@ -60,7 +58,7 @@ func (e *AlreadyExistError) Error() string {
 	return fmt.Sprintf("already exists. model: %s, id: %d, name: %s", e.ModelName, e.ID, e.Name)
 }
 
-// NoSuchDataError は、データが存在しないことを表す。
+// NoSuchDataError は、データが存在しないことを表すエラー。
 type NoSuchDataError struct {
 	ID        int
 	Name      string
