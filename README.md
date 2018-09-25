@@ -6,7 +6,7 @@ The sample codes of Clean Architecture with Go.
 1 clone this repository.
 
 ```
-cd ${Your_Working_Directory(Working Directory should be your on $GOPATH/src)}
+cd ${Your_Working_Directory(Working Directory should be on your $GOPATH/src)}
 git clone git@github.com:SekiguchiKai/clean-architecture-with-go.git
 ```
 
