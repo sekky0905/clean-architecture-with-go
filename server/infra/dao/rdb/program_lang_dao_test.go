@@ -143,19 +143,6 @@ func TestProgrammingLangDAO_Create(t *testing.T) {
 			rowAffected: 0,
 			wantErr:     true,
 		},
-		{
-			name: "Featureを保持する空のProgrammingLangを与えられた場合、エラーを返すこと",
-			fields: fields{
-				SQLManager: &rdb.SQLManager{Conn: db},
-			},
-			args: args{
-				ctx:  context.Background(),
-				lang: &model.ProgrammingLang{},
-			},
-			want:        nil,
-			rowAffected: 0,
-			wantErr:     true,
-		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -416,7 +403,7 @@ func TestProgrammingLangDAO_ReadByName(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name: "IDで指定したProgrammingLangが存在しない場合、エラー返すこと",
+			name: "Nameで指定したProgrammingLangが存在しない場合、エラー返すこと",
 			fields: fields{
 				SQLManager: &rdb.SQLManager{Conn: db},
 			},
@@ -559,19 +546,6 @@ func TestProgrammingLangDAO_Update(t *testing.T) {
 			rowAffected: 0,
 			wantErr:     true,
 		},
-		{
-			name: "Featureのみを保持するProgrammingLangを与えられた場合、エラーを返すこと",
-			fields: fields{
-				SQLManager: &rdb.SQLManager{Conn: db},
-			},
-			args: args{
-				ctx:  context.Background(),
-				lang: &model.ProgrammingLang{},
-			},
-			want:        nil,
-			rowAffected: 0,
-			wantErr:     true,
-		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -622,7 +596,7 @@ func TestProgrammingLangDAO_Delete(t *testing.T) {
 		wantErr     bool
 	}{
 		{
-			name: "Nameのみを保持するProgrammingLangを与えられた場合、IDを付与したProgrammingLangを返すこと",
+			name: "適切なIDを与えると、エラーを返さないこと",
 			fields: fields{
 				SQLManager: &rdb.SQLManager{Conn: db},
 			},
@@ -634,7 +608,7 @@ func TestProgrammingLangDAO_Delete(t *testing.T) {
 			wantErr:     false,
 		},
 		{
-			name: "Nameのみを保持するProgrammingLangを与えられた場合、IDを付与したProgrammingLangを返すこと",
+			name: "rowAffectedが1以外の場合、エラーを返すこと",
 			fields: fields{
 				SQLManager: &rdb.SQLManager{Conn: db},
 			},
@@ -643,18 +617,6 @@ func TestProgrammingLangDAO_Delete(t *testing.T) {
 				id:  1,
 			},
 			rowAffected: 2,
-			wantErr:     true,
-		},
-		{
-			name: "IDが空の場合、ProgrammingLangを与えられた場合、IDを付与したProgrammingLangを返すこと",
-			fields: fields{
-				SQLManager: &rdb.SQLManager{Conn: db},
-			},
-			args: args{
-				ctx: context.Background(),
-				id:  1,
-			},
-			rowAffected: 1,
 			wantErr:     true,
 		},
 	}
